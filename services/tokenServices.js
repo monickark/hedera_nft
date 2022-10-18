@@ -32,26 +32,27 @@ async function createTokenDetails(data) {
         
         // CREATE NFT WITH CUSTOM FEE
         let nftCreate = await new TokenCreateTransaction()
-        .setTokenName(data.tokenName)
-        .setTokenSymbol(data.tokenSymbol)
-        //  .setTokenType(TokenType.NonFungibleUnique)
-        //  .setDecimals(0)
-        //  .setInitialSupply(0)
+            .setTokenName(data.tokenName)
+            .setTokenSymbol(data.tokenSymbol)
+            .setTokenType(TokenType.NonFungibleUnique)
+            .setDecimals(data.decimals)
+            .setInitialSupply(data.initialSupply)
             .setTreasuryAccountId(AccountId.fromString(data.treasuryId))
-        //  .setSupplyType(TokenSupplyType.Finite)
-        //  .setMaxSupply(CID.length)
-        // .setCustomFees([nftCustomFee])
-        .setAdminKey(PrivateKey.fromString(data.treasuryKey).publicKey)
-        // .setSupplyKey(supplyKey)
-        // .setPauseKey(pauseKey)
-        // .setFreezeKey(freezeKey)
-        // .setWipeKey(wipeKey)
-         .freezeWith(client)
+            .setSupplyType(TokenSupplyType.Finite)
+            .setMaxSupply(data.maxSupply)
+        //  .setCustomFees([nftCustomFee])
+            .setAdminKey(PrivateKey.fromString(data.treasuryKey).publicKey)
+            .setSupplyKey(PrivateKey.fromString(data.supplyKey).publicKey)
+        //  .setPauseKey(pauseKey)
+        //  .setFreezeKey(freezeKey)
+        //  .setWipeKey(wipeKey)
+            .freezeWith(client)
         // .sign(treasuryKey);
 
         let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(data.treasuryKey));
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
         let nftCreateRx = await nftCreateSubmit.getReceipt(client);
+       // console.log("nftCreateRx:"+JSON.stringify(nftCreateRx));
         let tokenId = nftCreateRx.tokenId;
         console.log(`Created NFT with Token ID: ${tokenId} \n`);
         return tokenId;

@@ -28,7 +28,7 @@ async function createClient() {
             let outputJson = {
                 client: client
             };
-        console.log("client return json: "+ JSON.stringify(outputJson));
+        //console.log("client return json: "+ JSON.stringify(outputJson));
         return outputJson;
 
     } catch (error) {
