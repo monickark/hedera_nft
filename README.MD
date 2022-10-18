@@ -3,6 +3,7 @@ npm start
 
 ## API
 1. {{host}}/createAccount
+
 Output:
 {
     "success": true,

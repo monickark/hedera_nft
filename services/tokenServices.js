@@ -1,6 +1,8 @@
 
 const {
     TokenCreateTransaction,
+    TokenId,
+    TokenMintTransaction,
     AccountId,
     TokenType,
     TokenSupplyType,
@@ -62,6 +64,51 @@ async function createTokenDetails(data) {
     } 
 }
 
+async function mintNewToken(data) {
+    try {
+        console.log("inside mintNewToken...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+      //  console.log("client called....")
+        
+        	// Mint new NFT
+        let mintTx = await new TokenMintTransaction()
+        .setTokenId(TokenId.fromString(data.tokenId))		
+        .setMetadata([Buffer.from(data.metadata)])		
+        .freezeWith(client);
+
+        console.log("before sign");
+        //Sign the transaction with the supply key
+        let mintTxSign = await mintTx.sign(PrivateKey.fromString(data.supplyKey));
+
+        console.log("before execute");
+        //Submit the transaction to a Hedera network
+        let mintTxSubmit = await mintTxSign.execute(client);
+
+        console.log("before receipt");
+        //Get the transaction receipt
+        let mintRx = await mintTxSubmit.getReceipt(client);
+        
+        //Log the serial number
+        console.log(`- Created NFT ${data.tokenId} with serial: ${mintRx.serials[0].low} \n`);
+        return outpuJSON = {
+            tokenId: data.tokenId,
+            serialId: mintRx.serials[0].low
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
 module.exports = {
-    createTokenDetails
+    createTokenDetails, mintNewToken
 }
