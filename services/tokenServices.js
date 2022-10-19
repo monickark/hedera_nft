@@ -96,7 +96,7 @@ async function mintNewToken(data) {
         console.log("before receipt");
         //Get the transaction receipt
         let mintRx = await mintTxSubmit.getReceipt(client);
-        
+
         //Log the serial number
         console.log(`- Created NFT ${data.tokenId} with serial: ${mintRx.serials[0].low} \n`);
         return outpuJSON = {
@@ -109,6 +109,46 @@ async function mintNewToken(data) {
     } 
 }
 
+async function batchMintToken(data) {
+    try {
+        console.log("inside mintNewToken...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+      
+        nftLeaf = [];
+        for (var i = 0; i < data.metadata.length; i++) {
+            nftLeaf[i] = await tokenMinterFcn(data.metadata[i], data.tokenId, client, data.supplyKey);
+            console.log(`Created NFT ${data.tokenId} with serial: ${nftLeaf[i].serials[0].low}`);
+        }
+        
+        return outpuJSON = {
+            tokenId: data.tokenId,
+            serialId: nftLeaf
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
+async function tokenMinterFcn(metadata, tokenId, client, supplyKey) {
+    mintTx = await new TokenMintTransaction()
+        .setTokenId(tokenId)
+        .setMetadata([Buffer.from(metadata)])
+        .freezeWith(client);
+    let mintTxSign = await mintTx.sign(PrivateKey.fromString(supplyKey));
+    let mintTxSubmit = await mintTxSign.execute(client);
+    let mintRx = await mintTxSubmit.getReceipt(client);
+    return mintRx;
+}
 module.exports = {
-    createTokenDetails, mintNewToken
+    createTokenDetails, mintNewToken, batchMintToken
 }

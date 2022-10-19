@@ -1,4 +1,4 @@
-const { createTokenDetails, mintNewToken } = require("../services/tokenServices.js");
+const { createTokenDetails, mintNewToken, batchMintToken } = require("../services/tokenServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 let dgbaseURL = "https://testnet.dragonglass.me/transactions/";
 let hederabaseURL = `https://Namescan.io/#/${process.env.HEDERA_NETWORK}/transaction/`;
@@ -55,6 +55,43 @@ exports.mintToken = async (req, res) => {
             "tokenId": response.tokenId,
             "serialId": response.serialId
         }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to mint new token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+
+}
+
+exports.createCollection = async (req, res) => {
+    try {        
+        console.log("Create mint token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await batchMintToken(req.body);  
+        console.log("serialId length: "+ JSON.stringify(response.serialId.length));
+        let serialsIds = [];
+        for(let i=0; i<response.serialId.length; i++ ) {
+            // console.log("Serial id: "+ response.serialId[i].serials[0].low);
+            serialsIds.push(response.serialId[i].serials[0].low);
+        }
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Minted",  
+            "tokenId": response.tokenId,
+            "serialId": serialsIds
+        }
+        console.log("Tokens Minted")
         return successResponse(res, outputJSON);
 
     } catch (error) {
