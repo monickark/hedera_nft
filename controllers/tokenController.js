@@ -1,4 +1,4 @@
-const { createTokenDetails, mintNewToken, batchMintToken } = require("../services/tokenServices.js");
+const { createTokenDetails, mintNewToken, batchMintToken, transferTokens } = require("../services/tokenServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 let dgbaseURL = "https://testnet.dragonglass.me/transactions/";
 let hederabaseURL = `https://Namescan.io/#/${process.env.HEDERA_NETWORK}/transaction/`;
@@ -98,6 +98,36 @@ exports.createCollection = async (req, res) => {
         console.log("Error", error)
         let outpuJSON = {
             message: "Failed to mint new token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+
+}
+
+exports.tokenTransfer = async (req, res) => {
+    try {        
+        console.log("Create transfer token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await transferTokens(req.body);  
+        console.log("RESPONSE address: "+ response);
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token transfer",  
+            "tokenId": response.tokenId
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to transfer token",
             err: error
         };
         return errorResponse(res, outpuJSON, 500);

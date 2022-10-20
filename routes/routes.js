@@ -1,6 +1,6 @@
 var express = require('express');
 var appRoute = express.Router();
-const { createToken, mintToken, createCollection } = require('../controllers/tokenController.js');
+const { createToken, mintToken, createCollection, tokenTransfer } = require('../controllers/tokenController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
 
@@ -19,6 +19,11 @@ appRoute.post(
 appRoute.post(
     "/createCollection",[],
     createCollection
+)
+
+appRoute.post(
+    "/tokenTransfer",[],
+    tokenTransfer
 )
 
 module.exports = appRoute;

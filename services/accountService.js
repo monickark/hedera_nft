@@ -3,7 +3,8 @@ const {
     Hbar,
     PrivateKey,
     AccountCreateTransaction,
-    AccountBalanceQuery
+    AccountBalanceQuery,
+    TopicCreateTransaction
 } = require("@hashgraph/sdk");
 const { createClient } = require('./client.js');
 const Web3 = require("web3");
@@ -12,10 +13,10 @@ let client;
 let ContractId;
 const web3 = new Web3;
 
-exports.createHederaAccount= async (req, res) => {
+exports.createHederaAccount= async (data) => {
     try {
         let response = await createClient();
-       // console.log("created client: "+ JSON.stringify(response));
+        console.log("created client: "+ JSON.stringify(data));
         if (response.err) {
             console.log("response.err", response.err);
             let outpuJSON = {
@@ -32,7 +33,7 @@ exports.createHederaAccount= async (req, res) => {
         console.log("newAccountPublicKey = " + newAccountPublicKey);
         const newAccount = await new AccountCreateTransaction()
             .setKey(newAccountPublicKey)
-            .setInitialBalance(Hbar.fromTinybars(12000000000))
+            .setInitialBalance(Hbar.fromTinybars(data.initBal))
             .execute(client);
         const getReceipt = await newAccount.getReceipt(client);
         const newAccountId = await getReceipt.accountId;

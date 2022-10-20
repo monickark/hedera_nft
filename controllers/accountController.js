@@ -3,7 +3,7 @@ const { successResponse, errorResponse } = require('../utilities/response');
 exports.createAccount = async (req, res) => {
     try {
         console.log("inside create account");
-        let response = await createHederaAccount();
+        let response = await createHederaAccount(req.body);
         if (response.err) {
             console.log("Create Account Error:", response.err)
             let outpuJSON = {

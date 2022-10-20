@@ -1,4 +1,3 @@
-
 const {
     TokenCreateTransaction,
     TokenId,
@@ -11,6 +10,9 @@ const {
     PrivateKey,
     PublicKey,
     TokenInfoQuery,
+    TokenAssociateTransaction,
+    AccountBalanceQuery,
+    TransferTransaction,
     Hbar
 } = require("@hashgraph/sdk");
 const { createClient } = require('./client.js');
@@ -77,7 +79,7 @@ async function mintNewToken(data) {
             return outpuJSON;
         }
         client = response.client;
-      //  console.log("client called....")
+        console.log("client called....")
         
         	// Mint new NFT
         let mintTx = await new TokenMintTransaction()
@@ -139,6 +141,80 @@ async function batchMintToken(data) {
     } 
 }
 
+async function transferTokens(data) {
+    try {
+        console.log("inside transferTokens...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called...");
+       //*******************************  ASSOCIATION **************************************//
+        //Create the associate transaction and sign with Receiver's key 
+        let associateReceiverTx = await new TokenAssociateTransaction()
+        .setAccountId(data.receiverId)
+        .setTokenIds([data.tokenId])
+        .freezeWith(client)
+        .sign(PrivateKey.fromString(data.receiverKey));
+
+        //Submit the transaction to a Hedera network
+        let associateReceiverTxSubmit = await associateReceiverTx.execute(client);
+
+        //Get the transaction receipt
+        let associateReceiverRx = await associateReceiverTxSubmit.getReceipt(client);
+
+        //Confirm the transaction was successful
+        console.log(`- NFT association with Receiver's account: ${associateReceiverRx.status}\n`);
+
+
+        // Check the balance before the transfer for the treasury account
+        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(AccountId.fromString(data.treasuryId)).execute(client);
+        console.log(`- Treasury balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
+
+        // Check the balance before the transfer for Receiver's account
+        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(AccountId.fromString(data.receiverId)).execute(client);
+        console.log(`- Receiver's balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
+
+       //*******************************  TRANSFER TOKEN **************************************//
+        // Transfer the NFT from treasury to Receiver
+        // Sign with the treasury key to authorize the transfer
+        let tokenTransferTx = await new TransferTransaction()
+            .addNftTransfer(data.tokenId, data.serialId, data.treasuryId, data.receiverId)
+            .freezeWith(client)
+            .sign(PrivateKey.fromString(data.treasuryKey));
+
+        let tokenTransferSubmit = await tokenTransferTx.execute(client);
+        let tokenTransferRx = await tokenTransferSubmit.getReceipt(client);
+
+        console.log(`\n- NFT transfer from Treasury to Receiver: ${tokenTransferRx.status} \n`);
+
+        // Check the balance of the treasury account after the transfer
+        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(data.treasuryId).execute(client);
+        console.log("Balance Transaction of Treasury Account:",balanceCheckTx.tokens.toString());
+
+        console.log(`- Treasury balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
+
+        // Check the balance of Receiver's account after the transfer
+        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(data.receiverId).execute(client);
+        console.log("Balance Transaction of Receiver Account:",balanceCheckTx.tokens.toString());
+        console.log(`- Receiver's balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
+     
+        
+        return outpuJSON = {
+            tokenId: data.tokenId
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
 async function tokenMinterFcn(metadata, tokenId, client, supplyKey) {
     mintTx = await new TokenMintTransaction()
         .setTokenId(tokenId)
@@ -150,5 +226,5 @@ async function tokenMinterFcn(metadata, tokenId, client, supplyKey) {
     return mintRx;
 }
 module.exports = {
-    createTokenDetails, mintNewToken, batchMintToken
+    createTokenDetails, mintNewToken, batchMintToken, transferTokens
 }
