@@ -1,5 +1,6 @@
 # HEDERA NFT PROJECT
 npm start
+solcjs --bin contracts/AuctionContract.sol -o binaries
 
 ## API
 1. {{host}}/createAccount
