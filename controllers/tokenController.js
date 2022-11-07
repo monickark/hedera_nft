@@ -1,4 +1,5 @@
-const { createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens } = require("../services/tokenServices.js");
+const { createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
+    scheduleTransaction, scheduleSignTransaction } = require("../services/tokenServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 
 exports.createToken = async (req, res) => {
@@ -145,6 +146,82 @@ exports.associateToken = async (req, res) => {
             "message": "Association Granted",  
             "tokenId": response.tokenId,
             "associatedId":response.associatedAcc
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+exports.userNFTs = async (req, res) => {
+    try {        
+        console.log("retrieve nfts hold by nft started");
+        console.log("Token query params: " + JSON.stringify(req.query));
+        let response = await userNFTs(req.query);  
+        console.log("RESPONSE address: "+ JSON.stringify(response.tokens));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Retrieved Tokens",  
+            "tokens": response.tokens
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to transfer token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.scheduleTransaction = async (req, res) => {
+    try {        
+        console.log("Create associate token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await scheduleTransaction(req.body);  
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Transaction Scheduled",  
+            "scheduleId":response.scheduleId1
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+exports.scheduleSignTransaction = async (req, res) => {
+    try {        
+        console.log("schedule Sign Transaction started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await scheduleSignTransaction(req.body);  
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Transaction Scheduled",  
+            "scheduleId":response.scheduleId1,
+            "status":response.txStatus
         }
         return successResponse(res, outputJSON);
 

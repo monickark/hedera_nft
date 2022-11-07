@@ -1,9 +1,9 @@
- const AuctionContract = artifacts.require('AuctionContract');
+ const Deploycontract = artifacts.require('KeyHelper');
   require('dotenv').config()
   
   module.exports = async function (deployer) {
-    await deployer.deploy(AuctionContract);
-    const contract = await AuctionContract.deployed();
+    await deployer.deploy(Deploycontract);
+    const contract = await Deploycontract.deployed();
     console.log("contract deployed at : "+ contract.address);
     
   }; 

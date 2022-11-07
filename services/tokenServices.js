@@ -1,7 +1,11 @@
 const {
     TokenCreateTransaction,
-    TokenId,
+    ScheduleCreateTransaction,
+    TransferTransaction,
+    TokenAssociateTransaction,
     TokenMintTransaction,
+    ScheduleSignTransaction,
+    TokenId,
     AccountId,
     TokenType,
     TokenSupplyType,
@@ -10,11 +14,11 @@ const {
     PrivateKey,
     PublicKey,
     TokenInfoQuery,
-    TokenAssociateTransaction,
     AccountBalanceQuery,
-    TransferTransaction,
+    TokenBalanceQuery,
     Hbar
 } = require("@hashgraph/sdk");
+const axios = require('axios');
 const { createClient } = require('./client.js');
 require("dotenv").config();
 const Web3 = require("web3");
@@ -163,7 +167,7 @@ async function batchMintToken(data) {
 
 async function transferTokens(data) {
     try {
-        console.log("inside transferTokens...")
+        console.log("inside transfer NFT Tokens...")
         let response = await createClient();
         if (response.err) {
             console.log("response.err", response.err);
@@ -175,39 +179,24 @@ async function transferTokens(data) {
         }
         client = response.client;
         console.log("client called...");
-
-        // Check the balance before the transfer for the treasury account
-        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(AccountId.fromString(data.treasuryId)).execute(client);
-        console.log(`- Treasury balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
-
-        // Check the balance before the transfer for Receiver's account
-        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(AccountId.fromString(data.receiverId)).execute(client);
-        console.log(`- Receiver's balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
-
-       //*******************************  TRANSFER TOKEN **************************************//
-        // Transfer the NFT from treasury to Receiver
-        // Sign with the treasury key to authorize the transfer
+        // Sign with the sender key to authorize the transfer        
         let tokenTransferTx = await new TransferTransaction()
-            .addNftTransfer(data.tokenId, data.serialId, data.treasuryId, data.receiverId)
+            .addNftTransfer(data.tokenId, data.serialId, data.senderId, data.receiverId)
+            // .addHbarTransfer(data.senderId, 1)
+            // .addHbarTransfer(data.receiverId, 1)
             .freezeWith(client)
-            .sign(PrivateKey.fromString(data.treasuryKey));
-
+            //.sign(data.senderKey);
+            
+        console.log("b4 sign" + tokenTransferTx)
+        console.log("b4 sign" + JSON.stringify(tokenTransferTx))
+        // let tokenTransferTxSign = await tokenTransferTx.sign(data.receiverKey);
+        // console.log("b4 execute")
         let tokenTransferSubmit = await tokenTransferTx.execute(client);
+        console.log("b4 execute")
         let tokenTransferRx = await tokenTransferSubmit.getReceipt(client);
 
-        console.log(`\n- NFT transfer from Treasury to Receiver: ${tokenTransferRx.status} \n`);
-
-        // Check the balance of the treasury account after the transfer
-        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(data.treasuryId).execute(client);
-        console.log("Balance Transaction of Treasury Account:",balanceCheckTx.tokens.toString());
-
-        console.log(`- Treasury balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);
-
-        // Check the balance of Receiver's account after the transfer
-        var balanceCheckTx = await new AccountBalanceQuery().setAccountId(data.receiverId).execute(client);
-        console.log("Balance Transaction of Receiver Account:",balanceCheckTx.tokens.toString());
-        console.log(`- Receiver's balance: ${balanceCheckTx.tokens._map.get(data.tokenId.toString())} NFTs of ID ${data.tokenId}`);     
-        
+        console.log(`\n- NFT transfer from Sender to Receiver: ${tokenTransferRx.status} \n`);
+   
         return outpuJSON = {
             tokenId: data.tokenId
         };
@@ -215,7 +204,7 @@ async function transferTokens(data) {
     } catch(error) {
             console.log("Error : "+ error)
         } 
-    }
+}
 
 async function associateTokens(data) {
     try {
@@ -274,6 +263,119 @@ async function tokenMinterFcn(metadata, tokenId, client, supplyKey) {
     return mintRx;
 }
 
+async function scheduleTransaction(data) {
+    try {
+        console.log("inside schedule Transaction...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called....");
+
+        const transactionToSchedule = new TransferTransaction()
+        .addHbarTransfer(data.senderId, Hbar.fromTinybars(-1))
+        .addHbarTransfer(data.receiverId, Hbar.fromTinybars(1));
+        
+        //Create a schedule transaction
+        const transaction = new ScheduleCreateTransaction()
+        .setScheduledTransaction(transactionToSchedule);
+    
+        //Sign with the client operator key and submit the transaction to a Hedera network
+        const txResponse = await transaction.execute(client);
+    
+        //Request the receipt of the transaction
+        const receipt = await txResponse.getReceipt(client);
+    
+        //Get the schedule ID
+        const scheduleId = receipt.scheduleId;
+        console.log("The schedule ID of the schedule transaction is " +scheduleId);
+        return outpuJSON = {
+            scheduleId1: scheduleId
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
+async function scheduleSignTransaction(data) {
+    try {
+        console.log("inside schedule sign Transaction...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called....");
+
+        const transaction = await new ScheduleSignTransaction()
+        .setScheduleId(data.scheduleId)
+        .freezeWith(client)
+        .sign(PrivateKey.fromString(data.senderKey));
+
+        console.log("b4 execute : ");
+        //Sign with the client operator key to pay for the transaction and submit to a Hedera network
+        const txResponse = await transaction.execute(client);
+        
+        console.log("b4 receipt : ");
+        //Get the receipt of the transaction
+        const receipt = await txResponse.getReceipt(client);
+        
+        //Get the transaction status
+        const transactionStatus = receipt.status;
+        console.log("The transaction consensus status is " +transactionStatus);
+
+        return outpuJSON = {
+            scheduleId1: data.scheduleId,
+            txStatus : transactionStatus
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
+async function userNFTs(data) {
+    
+    let tokenArr = []
+    try {
+        console.log("inside user nft....")
+        console.log("account: "+ data.account)
+        let url = 'https://testnet.mirrornode.hedera.com/api/v1/accounts/'+data.account+'/nfts';
+        
+        console.log("url: "+ url);
+
+        await axios.get(url).then(resp => {            
+           // console.log("resp  data : "+ JSON.stringify(resp.data.nfts));
+            let nfts = resp.data.nfts;
+            console.log("Size: "+ resp.data.nfts.length);
+        
+            for (var token of nfts) {
+                tokenArr.push(token.token_id +":"+ token.serial_number)
+            }
+        });               
+        console.log("return tokens: "+ JSON.stringify(tokenArr))
+        return outpuJSON = {
+            tokens: tokenArr
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
 module.exports = {
-    createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens
+    createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
+    scheduleTransaction, scheduleSignTransaction
 }

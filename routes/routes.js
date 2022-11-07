@@ -1,6 +1,6 @@
 var express = require('express');
 var appRoute = express.Router();
-const { createToken, mintToken, createCollection, tokenTransfer, associateToken } = require('../controllers/tokenController.js');
+const { createToken, mintToken, createCollection, tokenTransfer, associateToken, userNFTs, scheduleTransaction, scheduleSignTransaction } = require('../controllers/tokenController.js');
 const { auctionDeployContract } = require('../controllers/auctionController.js');
 const { createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
@@ -53,6 +53,21 @@ appRoute.post(
 appRoute.post(
     "/associateToken",[],
     associateToken
+)
+
+appRoute.get(
+    "/retrieveUserNfts",
+    userNFTs
+)
+
+appRoute.post(
+    "/scheduleTransaction",[],
+    scheduleTransaction
+)
+
+appRoute.post(
+    "/scheduleSignTransaction",[],
+    scheduleSignTransaction
 )
 
 module.exports = appRoute;
