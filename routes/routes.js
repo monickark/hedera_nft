@@ -1,12 +1,26 @@
 var express = require('express');
 var appRoute = express.Router();
 const { createToken, mintToken, createCollection, tokenTransfer, associateToken, userNFTs, scheduleTransaction, scheduleSignTransaction } = require('../controllers/tokenController.js');
-const { auctionDeployContract } = require('../controllers/auctionController.js');
-const { createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
+const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, retrieveAuction } = require('../controllers/auctionController.js');
+const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
 
-appRoute.post("/deployContract", auctionDeployContract)
+// AUCTION ROUTES
+
+appRoute.post("/deployAuctionContract", deployAuctionContract)
+
+appRoute.post("/createAuction", createAuction)
+
+appRoute.post("/placebid", placeBidAuction)
+
+appRoute.post("/settleAuction", settlementAuction)
+
+appRoute.get("/retrieveAuction", retrieveAuction)
+
+// TOKEN THROGH CONTRACT
+
+appRoute.post("/deployContract", deployTokenContract)
 
 appRoute.post("/createAccount",createAccount)
 

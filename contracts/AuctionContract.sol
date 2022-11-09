@@ -6,78 +6,92 @@ import './IHederaTokenService.sol';
 import './HederaTokenService.sol';
 import './ExpiryHelper.sol';
  
-contract TokenCreator is ExpiryHelper{
- 
-   function createNonFungible(
-           string memory name,
-           string memory symbol,
-           string memory memo,
-           uint32 maxSupply,
-           uint32 autoRenewPeriod
-       ) external payable returns (address, IHederaTokenService.TokenKey[] memory){
- 
-       // Instantiate the list of keys we'll use for token create
-        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](1);
-        // use the helper methods in KeyHelper to create basic key
-        keys[0] = createSingleKey(HederaTokenService.SUPPLY_KEY_TYPE, KeyHelper.CONTRACT_ID_KEY, address(this));
+contract AuctionContract is ExpiryHelper{
 
-        IHederaTokenService.HederaToken memory token;
-        token.name = name;
-        token.symbol = symbol;
-        token.memo = memo;
-        token.treasury = address(this);
-        token.tokenSupplyType = true; // set supply to FINITE
-        token.tokenKeys = keys;
-        token.maxSupply = maxSupply;
-        token.freezeDefault = false;
-        token.expiry = createAutoRenewExpiry(address(this), autoRenewPeriod); // Contract automatically renew by himself
- 
-       (int responseCode, address createdToken) = HederaTokenService.createNonFungibleToken(token);
- 
-       if(responseCode != HederaResponseCodes.SUCCESS){
-           revert("Failed to create non-fungible token");
-       }
-       return (createdToken, keys);
-   }
+  /**
+   * @notice NFT metadata along with bid details
+  */
+  struct Auction {
+    address tokenId;
+    int64 serialNumber;
+    uint256 basePrice;
+    uint256 salePrice;
+    address auctioner;
+    address currentBidder;
+    uint256 bidAmount;
+  }  
 
-    function mintNonFungibleToken(
-           address token,
-           uint64 amount,
-           bytes[] memory metadata
-       ) public returns (int responseCode, uint64 newTotalSupply, int64[] memory serialNumbers)  {
-        (responseCode, newTotalSupply, serialNumbers) = HederaTokenService.mintToken(token, amount, metadata);
-       
-        if (responseCode != HederaResponseCodes.SUCCESS) {
-            revert();
-        }
+   mapping(address => mapping(int64 => mapping(address => Auction))) public mapAuction;
+
+    /**
+   * @notice createAuction
+   * Function to start auction with first bid.
+   * Validate signatures, stores NFT data and add first bid as well
+   */
+ 
+   function createAuction(address tokenId, int64 serialNumber, address walletAcct, uint256 basePrice, uint256 salePrice) external payable {
+    // require(salePrice > 0, 'Create Auction: Zero sale price.');
+    // require(basePrice > 0, 'Create Auction : Zero base price.');
+
+    Auction storage NftOnAuction = mapAuction[tokenId][serialNumber][msg.sender];
+    NftOnAuction.salePrice = salePrice;
+    NftOnAuction.auctioner = msg.sender;
+    NftOnAuction.bidAmount = msg.value;
+    NftOnAuction.currentBidder = msg.sender;
+
+    // transferNonFungibleToken(tokenId, msg.sender, walletAcct, serialNumber);
+
+  }
+
+    /**
+   * @notice placeBid
+   * Function to place the bid on the nfts using native cryptocurrency and multiple erc20 token
+   * @param _tokenId NFT unique ID
+   * @param _price bid price
+   * @param _auctioner Seller address
+   */
+  function placeBid(
+    address _tokenId,
+    int64 _serialNumber,
+    uint256 _price,
+    address _auctioner
+  ) public payable {
+    Auction storage NftOnAuction = mapAuction [_tokenId][_serialNumber][_auctioner];
+
+    require(_price >= NftOnAuction.basePrice, 'Place Bid : Price Less Than the base price');
+    require(_price > NftOnAuction.bidAmount, 'Place Bid : The price is less then the previous bid amount');
+    // require(msg.value == _price, 'Place Bid: Amount received and price should be same');
+    // require(msg.value > NftOnAuction.bidAmount, 'Place Bid: Amount received should be grather than the current bid');
+    // if (NftOnAuction.currentBidder != address(0)) {
+    //   payable(NftOnAuction.currentBidder).transfer(NftOnAuction.bidAmount);
+    // }
+    NftOnAuction.bidAmount = _price;
+    NftOnAuction.currentBidder = msg.sender;
+  }
+
+  function settleAuction(
+    address _tokenId,
+    int64 _serialNumber,
+    address walletAcct,
+    address _auctioner
+  ) public {
+    Auction storage NftOnAuction = mapAuction[_tokenId][_serialNumber][_auctioner];
+    require(msg.sender == NftOnAuction.auctioner, 'Settle Auction : Restricted to auctioner or admin!');
+    transferNonFungibleToken(_tokenId, walletAcct, NftOnAuction.currentBidder,  _serialNumber);
+    delete mapAuction[_tokenId][_serialNumber][_auctioner];
+  }
+  function transferNonFungibleToken(
+    address token,
+    address sender,
+    address receiver,
+    int64 serialNumber
+  ) public payable {
+ 
+    (int responseCode) = 
+    HederaTokenService.transferNFT(token, sender, receiver, serialNumber);
+
+    if(responseCode != HederaResponseCodes.SUCCESS){
+        revert("Failed to create non-fungible token");
     }
-
-    function transferNonFungibleToken(
-           address token,
-           address sender,
-           address receiver,
-           int64 serialNumber
-       ) external payable {
- 
-       (int responseCode) = 
-       HederaTokenService.transferNFT(token, sender, receiver, serialNumber);
- 
-       if(responseCode != HederaResponseCodes.SUCCESS){
-           revert("Failed to create non-fungible token");
-       }
-   }
-
-       function associateNonFungibleToken(
-           address account,
-           address token
-       ) external {
- 
-       (int responseCode) = 
-       HederaTokenService.associateToken(account, token);
- 
-       if(responseCode != HederaResponseCodes.SUCCESS){
-           revert("Failed to create non-fungible token");
-       }
-   }
- 
+  }
 }

@@ -110,7 +110,8 @@ abstract contract HederaTokenService is HederaResponseCodes {
         (bool success, bytes memory result) = precompileAddress.call(
             abi.encodeWithSelector(IHederaTokenService.associateToken.selector,
             account, token));
-        responseCode = success ? abi.decode(result, (int32)) : HederaResponseCodes.UNKNOWN;
+       responseCode = success ? abi.decode(result, (int32)) : HederaResponseCodes.UNKNOWN;
+       // responseCode = 22;
     }
 
     /// Dissociates the provided account with the provided tokens. Must be signed by the provided

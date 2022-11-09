@@ -1,10 +1,8 @@
-const { deployContract, } = require("../services/auctionServices.js");
+const { deployContract, createAuctionDetails, placeBid, settleAuction, getAuction} = require("../services/auctionServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
-let dgbaseURL = "https://testnet.dragonglass.me/transactions/";
-let hederabaseURL = `https://Namescan.io/#/${process.env.HEDERA_NETWORK}/transaction/`;
-let mirrorNodeApi = `https://${process.env.HEDERA_NETWORK}.mirrornode.hedera.com/api/v1/transactions/`
 
-exports.auctionDeployContract = async (req, res) => {
+
+exports.deployAuctionContract = async (req, res) => {
     try {
         let response = await deployContract();
 
@@ -17,13 +15,129 @@ exports.auctionDeployContract = async (req, res) => {
         }
         let outputJson = {
             "message": "The Contract is successfully deployed",
-            "ContractId": response.ContractId
+            "contractId": response.contractId
         }
         return successResponse(res, outputJson);
     } catch (error) {
         console.log("Error", error);
         let outpuJSON = {
             message: "Contract Deployment Failed",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.createAuction = async (req, res) => {
+    try {        
+        console.log("Create auction started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await createAuctionDetails(req.body);        
+        console.log("RESPONSE address: "+ response);
+        console.log("RESPONSE address: "+ JSON.stringify(response));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Created",
+            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.placeBidAuction = async (req, res) => {
+    try {        
+        console.log("Create place Bid started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await placeBid(req.body);        
+        console.log("RESPONSE address: "+ response);
+        console.log("RESPONSE address: "+ JSON.stringify(response));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Created",
+            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.settlementAuction = async (req, res) => {
+    try {        
+        console.log("Create place Bid started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await settleAuction(req.body);        
+        console.log("RESPONSE address: "+ response);
+        console.log("RESPONSE address: "+ JSON.stringify(response));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Created",
+            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.retrieveAuction = async (req, res) => {
+    try {        
+        console.log("Create place Bid started");
+        console.log("Token body params: " + req.query);
+        let response = await getAuction(req.query);        
+        console.log("RESPONSE address: "+ response);
+        console.log("RESPONSE address: "+ JSON.stringify(response));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Created",
+            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
             err: error
         };
         return errorResponse(res, outpuJSON, 500);

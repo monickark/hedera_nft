@@ -60,18 +60,13 @@ async function createTokenDetails(data) {
             .setTokenType(TokenType.NonFungibleUnique)
             .setDecimals(data.decimals)
             .setInitialSupply(data.initialSupply)
-            .setTreasuryAccountId(AccountId.fromString(data.treasuryId))
-        //    .setTreasuryAccountId(data.treasuryId)
+            .setTreasuryAccountId(data.treasuryId)
             .setSupplyType(TokenSupplyType.Finite)
             .setMaxSupply(data.maxSupply)
-            .setCustomFees([await getCustomFees(data.numerator, data.denominator, data.treasuryId)])
+            //.setCustomFees([await getCustomFees(data.numerator, data.denominator, data.treasuryId)])
             .setAdminKey(PrivateKey.fromString(data.treasuryKey))
             .setSupplyKey(PrivateKey.fromString(data.supplyKey))
-        //  .setPauseKey(pauseKey)
-        //  .setFreezeKey(freezeKey)
-        //  .setWipeKey(wipeKey)
             .freezeWith(client)
-        // .sign(treasuryKey);
 
         console.log("b4 sign");
         let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(data.treasuryKey));
@@ -182,15 +177,11 @@ async function transferTokens(data) {
         // Sign with the sender key to authorize the transfer        
         let tokenTransferTx = await new TransferTransaction()
             .addNftTransfer(data.tokenId, data.serialId, data.senderId, data.receiverId)
-            // .addHbarTransfer(data.senderId, 1)
-            // .addHbarTransfer(data.receiverId, 1)
             .freezeWith(client)
-            //.sign(data.senderKey);
+            .sign(PrivateKey.fromString(data.senderKey));
             
         console.log("b4 sign" + tokenTransferTx)
-        console.log("b4 sign" + JSON.stringify(tokenTransferTx))
-        // let tokenTransferTxSign = await tokenTransferTx.sign(data.receiverKey);
-        // console.log("b4 execute")
+       // console.log("b4 sign" + JSON.stringify(tokenTransferTx))
         let tokenTransferSubmit = await tokenTransferTx.execute(client);
         console.log("b4 execute")
         let tokenTransferRx = await tokenTransferSubmit.getReceipt(client);
@@ -198,7 +189,9 @@ async function transferTokens(data) {
         console.log(`\n- NFT transfer from Sender to Receiver: ${tokenTransferRx.status} \n`);
    
         return outpuJSON = {
-            tokenId: data.tokenId
+            tokenId: data.tokenId,
+            serialId: data.serialId
+
         };
      
     } catch(error) {
