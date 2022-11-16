@@ -16,14 +16,14 @@ const fs = require("fs");
 const bytecode = fs.readFileSync(
     "./binaries/contracts_AuctionContract_sol_AuctionContract.bin"
   );
+const contract =  require("../build/contracts/AuctionContract.json");
 const { createClient } = require('./client.js');
 require("dotenv").config();
 const Web3 = require("web3");
-const axios = require("axios");
+
 const ethers = require('ethers');
 let client;
 let contractId;
-const addStudentTransactionMemo = "DMS:Student Submit Transaction";
 const web3 = new Web3;
 
 async function deployContract() {
@@ -90,25 +90,20 @@ async function createAuctionDetails(data) {
         const createToken = new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
-        .setPayableAmount(5) // Increase if revert
+        .setPayableAmount(data.basePrice) // Increase if revert
         .setFunction("createAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
-            .addInt64(data.serialNumber) // base price
-            .addAddress(AccountId.fromString(data.walletAcct).toSolidityAddress())
-            .addUint256(data.basePrice) // base price
-            .addUint256(data.salePrice)); // auctioner
-
+            .addInt64(data.serialNumber) // base price            
+            .addUint256(data.basePrice*(10e7))); // base price)
+        console.log("data.basePrice: ", data.basePrice*(10e7));
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
         console.log("b4 recrd");
         const createTokenRx = await createTokenTx.getRecord(client);
-        // console.log("createTokenRx: "+JSON.stringify(createTokenRx));
-        // console.log("receipt: "+JSON.stringify(createTokenRx.receipt));
-        console.log("transactionHash: "+createTokenRx.transactionHash);
-        console.log("transactionHash: "+createTokenRx.transactionHash.toString());
-        
-     
+        console.log("transactionId: "+createTokenRx.transactionId);
+        return createTokenRx.transactionId;
+
 } catch(error) {
         console.log("Error : "+ error)
     } 
@@ -133,23 +128,20 @@ async function placeBid(data) {
         const createToken = new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
-        .setPayableAmount(10) // Increase if revert
+        .setPayableAmount(data.price) // Increase if revert
         .setFunction("placeBid",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price // base price
-            .addUint256(data.price)
+            .addUint256(data.price*(10e7))
             .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
-
+        console.log("price : " + data.price*(10e7));
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
         console.log("b4 recrd");
         const createTokenRx = await createTokenTx.getRecord(client);
-        // console.log("createTokenRx: "+JSON.stringify(createTokenRx));
-        // console.log("receipt: "+JSON.stringify(createTokenRx.receipt));
-        console.log("transactionHash: "+createTokenRx.transactionHash);
-        console.log("transactionHash: "+createTokenRx.transactionHash.toString());
-        
+        console.log("transactionId: "+createTokenRx.transactionId);
+        return createTokenRx.transactionId;
      
 } catch(error) {
         console.log("Error : "+ error)
@@ -175,24 +167,18 @@ async function settleAuction(data) {
         const createToken = new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
-        .setPayableAmount(200) // Increase if revert
         .setFunction("settleAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price
-            .addAddress(AccountId.fromString(data.walletAcct).toSolidityAddress())
             .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
 
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
         console.log("b4 recrd");
         const createTokenRx = await createTokenTx.getRecord(client);
-        // console.log("createTokenRx: "+JSON.stringify(createTokenRx));
-        // console.log("receipt: "+JSON.stringify(createTokenRx.receipt));
-        console.log("transactionHash: "+createTokenRx.transactionHash);
-        console.log("transactionHash: "+createTokenRx.transactionHash.toString());
-        
-     
+        console.log("transactionId: "+createTokenRx.transactionId);
+        return createTokenRx.transactionId;
 } catch(error) {
         console.log("Error : "+ error)
     } 
@@ -214,15 +200,18 @@ async function getAuction(data) {
         console.log("client called....")       
         //Contract call query
         
-        const query = new ContractCallQuery()
-            .setContractId(data.contractId)
-            .setGas(300000)
-            .setFunction("mapAuction", new ContractFunctionParameters().addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()).addInt64(data.serialNumber).addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()));
-        
         // const query = new ContractCallQuery()
-        // .setContractId(data.contractId)
-        // .setGas(300000)
-        // .setFunction("test", new ContractFunctionParameters().addUint256(1));
+        //     .setContractId(data.contractId)
+        //     .setGas(300000)
+        //     .setFunction("mapAuction", new ContractFunctionParameters()
+        //         .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress())
+        //         .addInt64(data.serialNumber)
+        //         .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()));
+        
+        const query = new ContractCallQuery()
+        .setContractId(data.contractId)
+        .setGas(300000)
+        .setFunction("auctioners");
     
         
             // const query = new ContractCallQuery()
@@ -232,9 +221,18 @@ async function getAuction(data) {
 
         //Sign with the client operator private key to pay for the query and submit the query to a Hedera network
         const contractCallResult = await query.execute(client);
-        console.log("contractCallResult: " + JSON.stringify(contractCallResult));
+        console.log("contractCallResult: " + JSON.stringify(contractCallResult.bytes));
+        console.log("contractCallResult: " + TokenId.fromBytes(contractCallResult.bytes));
+      //  console.log("contractCallResult: " + parseInt(contractCallResult.bytes));
+
+
+        const receipt = await contractCallResult.getReceipt(client);
+        console.log("receipt: " + JSON.stringify(receipt));
+        contractId = (receipt.contractId).toString();
+        console.log("The new contract ID is ", contractId);
+        
         // Get the function value
-        const message = contractCallResult.getuint256(0);
+        const message = contractCallResult.getString(0);
         console.log("contract message: " + message);
         
      
@@ -243,6 +241,96 @@ async function getAuction(data) {
     } 
 }
 
+async function getAuctionDetails(data) {
+    try {
+
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+
+            let outpuJSON = {
+                message: "Client creation failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+
+        console.log("contract id inside contract call : " + data.contractId);
+
+        const functionAbi = contract.abi.find(func => (func.name === "bidder" && func.type === "function"));
+        console.log("functionAbi : " + JSON.stringify(functionAbi))
+        const encodedParametersHex = web3.eth.abi.encodeFunctionCall(functionAbi, []).slice(2);  
+        // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
+        const params =  Buffer.from(encodedParametersHex, 'hex');
+        // console.log("params : "+ params)
+        const query = 
+         new ContractCallQuery()
+            .setContractId(ContractId.fromString(data.contractId))
+            .setGas(100000)
+            .setFunctionParameters(params)
+          
+         const contractCallResult = await query.execute(client); 
+         // console.log("contract call result ",contractCallResult);       // Get the function value
+         const message = contractCallResult.bytes;
+         console.log("contract message: " + JSON.stringify(message));
+         console.log("contract message: " + message.toString('hex'));
+         let hexStr = message.toString('hex');
+         console.log("bidder: " + parseInt(hexStr, 16));
+
+         
+        //  console.log("************************   PRICE AMT  **********************************")
+
+        //  const functionAbi1 = contract.abi.find(func => (func.name === "msgValue" && func.type === "function"));
+        // console.log("functionAbi : " + JSON.stringify(functionAbi1))
+        // const encodedParametersHex1 = web3.eth.abi.encodeFunctionCall(functionAbi1, []).slice(2);  
+        // // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
+        // const params1 =  Buffer.from(encodedParametersHex1, 'hex');
+        // // console.log("params : "+ params)
+        // const query1 = 
+        //  new ContractCallQuery()
+        //     .setContractId(ContractId.fromString(data.contractId))
+        //     .setGas(100000)
+        //     .setFunctionParameters(params1)
+        //  const contractCallResult1 = await query1.execute(client); 
+        //  // console.log("contract call result ",contractCallResult);       // Get the function value
+        //  const message1 = contractCallResult1.bytes;
+        //  console.log("contract message: " + JSON.stringify(message));
+        //  console.log("contract message: " + message1.toString('hex'));
+        //  let hexStr1 = message1.toString('hex');
+        //  console.log("msgValue: " + parseInt(hexStr1, 16));
+
+        //  console.log("************************   MSG VALUE  **********************************")
+
+        //  const functionAbi2 = contract.abi.find(func => (func.name === "priceAmt" && func.type === "function"));
+        // console.log("functionAbi : " + JSON.stringify(functionAbi2))
+        // const encodedParametersHex2 = web3.eth.abi.encodeFunctionCall(functionAbi2, []).slice(2);  
+        // // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
+        // const params2 =  Buffer.from(encodedParametersHex2, 'hex');
+        // // console.log("params : "+ params)
+        // const query2 = 
+        //  new ContractCallQuery()
+        //     .setContractId(ContractId.fromString(data.contractId))
+        //     .setGas(100000)
+        //     .setFunctionParameters(params2)
+        //  const contractCallResult2 = await query2.execute(client); 
+        //  // console.log("contract call result ",contractCallResult);       // Get the function value
+        //  const message2 = contractCallResult1.bytes;
+        //  console.log("contract message: " + JSON.stringify(message));
+        //  console.log("contract message: " + message2.toString('hex'));
+        //  let hexStr2 = message2.toString('hex');
+        //  console.log("priceAmt: " + parseInt(hexStr2, 16));
+
+
+    } catch (error) {
+        let outpuJSON = {
+            message: "Contract query Failed",
+            err: error
+        }
+        return outpuJSON;
+    }
+}
+
 module.exports = {
-     deployContract, createAuctionDetails, placeBid, settleAuction, getAuction
+     deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails
 }

@@ -1,4 +1,4 @@
-const { deployContract, createAuctionDetails, placeBid, settleAuction, getAuction} = require("../services/auctionServices.js");
+const { deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails} = require("../services/auctionServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 
 
@@ -34,7 +34,6 @@ exports.createAuction = async (req, res) => {
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await createAuctionDetails(req.body);        
         console.log("RESPONSE address: "+ response);
-        console.log("RESPONSE address: "+ JSON.stringify(response));
         if (response.err) {
             console.log("Error", response.err);
             let errorJSON = {
@@ -43,8 +42,8 @@ exports.createAuction = async (req, res) => {
             return errorResponse(res, errorJSON, 500);
         }
         let outputJSON = {
-            "message": "Token Created",
-            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+            "message": "New Action Created",
+            "tokenId": response
         }
         return successResponse(res, outputJSON);
     } catch (error) {
@@ -62,18 +61,17 @@ exports.placeBidAuction = async (req, res) => {
         console.log("Create place Bid started");
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await placeBid(req.body);        
-        console.log("RESPONSE address: "+ response);
-        console.log("RESPONSE address: "+ JSON.stringify(response));
+        console.log("RESPONSE "+ response);
         if (response.err) {
             console.log("Error", response.err);
             let errorJSON = {
-                message: "Token Creation Failed"
+                message: "Auction Bid Failed"
             }
             return errorResponse(res, errorJSON, 500);
         }
         let outputJSON = {
-            "message": "Token Created",
-            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+            "message": "Bid placed",
+            "txionId": response
         }
         return successResponse(res, outputJSON);
     } catch (error) {
@@ -92,17 +90,16 @@ exports.settlementAuction = async (req, res) => {
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await settleAuction(req.body);        
         console.log("RESPONSE address: "+ response);
-        console.log("RESPONSE address: "+ JSON.stringify(response));
         if (response.err) {
             console.log("Error", response.err);
             let errorJSON = {
-                message: "Token Creation Failed"
+                message: "Auction Settled Failed"
             }
             return errorResponse(res, errorJSON, 500);
         }
         let outputJSON = {
-            "message": "Token Created",
-            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+            "message": "Auction Settled",
+            "tokenId": response
         }
         return successResponse(res, outputJSON);
     } catch (error) {
@@ -119,7 +116,7 @@ exports.retrieveAuction = async (req, res) => {
     try {        
         console.log("Create place Bid started");
         console.log("Token body params: " + req.query);
-        let response = await getAuction(req.query);        
+        let response = await getAuctionDetails(req.query);        
         console.log("RESPONSE address: "+ response);
         console.log("RESPONSE address: "+ JSON.stringify(response));
         if (response.err) {

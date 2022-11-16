@@ -1,0 +1,3493 @@
+{
+  "contractName": "KeyHelper",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/KeyHelper.sol\":\"KeyHelper\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/HederaResponseCodes.sol\":{\"keccak256\":\"0x1b0a4e16c2cf238e15dc6c98789a32bb0186cbbed419efe593d74ff8051709de\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://24f4deaaa2acfc381fe91c989f8183429251f2d4bf5823c225fe95018b140ad0\",\"dweb:/ipfs/QmUBi59xPjxXJCZ3hpveN3cpBQupQXiqGy3TGvccoBVJDb\"]},\"project:/contracts/HederaTokenService.sol\":{\"keccak256\":\"0xc07d56e1b28a960af45e4c837e7896e44b5c66b706bbad1fb27dfb0e088b0df2\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://93fd0bdeed12dd2db314c94dbc7385fe94c5c148cfc974d854707e7ddc4d678a\",\"dweb:/ipfs/QmfJn9z2hUif16hvVqrJhNXfzpDRtYm9dhDdrENgToCV2x\"]},\"project:/contracts/IHederaTokenService.sol\":{\"keccak256\":\"0xb95b948c23b3b0bbe9f7aa5aa6c2788c0f860f9569bb6441639baf96e0ee62a2\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://ad6cfa6073043c4d0a8cb8a8250bc19040eb5a07c044cdaaded397db8d5fee1d\",\"dweb:/ipfs/QmfVeEL8dG8qCJEUpokRvzcLoT2ydJBUfHVn1WiUmqCAK8\"]},\"project:/contracts/KeyHelper.sol\":{\"keccak256\":\"0x0d2bf35d0c8d6fb026801c9df54872a00837fe5a510e4ae713bf9e23aa2ac83e\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://c60d4e2840a57669d57a42ca5682f3bfbd9abcc32b0e4e7fe89874b595d0be6b\",\"dweb:/ipfs/QmarV2kd7t7M1GC2hWkYbP8HsTjL1edyRYkfLoDhCJxcCT\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220d79e83b1b85d67772ee16523290ef35a807b64f4585138c5a44b4b8145c8cfc664736f6c63430008060033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220d79e83b1b85d67772ee16523290ef35a807b64f4585138c5a44b4b8145c8cfc664736f6c63430008060033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "148:1598:7:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "148:1598:7:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: Apache-2.0\r\npragma solidity >=0.5.0 <0.9.0;\r\npragma experimental ABIEncoderV2;\r\n\r\nimport \"./HederaTokenService.sol\";\r\n\r\ncontract KeyHelper is HederaTokenService {\r\n\r\n    uint constant INHERIT_ACCOUNT_KEY = 1;\r\n    uint constant CONTRACT_ID_KEY = 2;\r\n    uint constant ED25519_KEY = 3;\r\n    uint constant ECDSA_SECPK2561K1_KEY = 4;\r\n    uint constant DELEGATABLE_CONTRACT_ID_KEY = 5;\r\n\r\n    function createSingleKey(\r\n        uint keyType,\r\n        uint keyValueType,\r\n        bytes memory key\r\n    ) internal view returns (IHederaTokenService.TokenKey memory tokenKey) {\r\n        tokenKey = IHederaTokenService.TokenKey(keyType, createKeyValueType(keyValueType, key, address(0)));\r\n    }\r\n\r\n    function createSingleKey(\r\n        uint keyType,\r\n        uint keyValueType,\r\n        address key\r\n    ) internal view returns (IHederaTokenService.TokenKey memory tokenKey) {\r\n        tokenKey = IHederaTokenService.TokenKey(keyType, createKeyValueType(keyValueType, \"\", key));\r\n    }\r\n\r\n    function createKeyValueType(\r\n        uint keyValueType,\r\n        bytes memory key,\r\n        address keyAddress\r\n    ) internal view returns (IHederaTokenService.KeyValue memory keyValue) {\r\n        if (keyValueType == INHERIT_ACCOUNT_KEY) {\r\n            keyValue.inheritAccountKey = true;\r\n        } else if (keyValueType == CONTRACT_ID_KEY) {\r\n            keyValue.contractId = keyAddress;\r\n        } else if (keyValueType == ED25519_KEY) {\r\n            keyValue.ed25519 = key;\r\n        } else if (keyValueType == ECDSA_SECPK2561K1_KEY) {\r\n            keyValue.ECDSA_secp256k1 = key;\r\n        } else if (keyValueType == DELEGATABLE_CONTRACT_ID_KEY) {\r\n            keyValue.delegatableContractId = keyAddress;\r\n        }\r\n    }\r\n}",
+  "sourcePath": "C:\\ACCUBITS\\PROJECT\\HEDERA_NFT\\contracts\\KeyHelper.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/KeyHelper.sol",
+    "exportedSymbols": {
+      "HederaResponseCodes": [
+        1138
+      ],
+      "HederaTokenService": [
+        2260
+      ],
+      "IHederaTokenService": [
+        2967
+      ],
+      "KeyHelper": [
+        3817
+      ]
+    },
+    "id": 3818,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3676,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.9",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:31:7"
+      },
+      {
+        "id": 3677,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "73:33:7"
+      },
+      {
+        "absolutePath": "project:/contracts/HederaTokenService.sol",
+        "file": "./HederaTokenService.sol",
+        "id": 3678,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 3818,
+        "sourceUnit": 2261,
+        "src": "110:34:7",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 3679,
+              "name": "HederaTokenService",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2260,
+              "src": "170:18:7"
+            },
+            "id": 3680,
+            "nodeType": "InheritanceSpecifier",
+            "src": "170:18:7"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 3817,
+        "linearizedBaseContracts": [
+          3817,
+          2260,
+          1138
+        ],
+        "name": "KeyHelper",
+        "nameLocation": "157:9:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 3683,
+            "mutability": "constant",
+            "name": "INHERIT_ACCOUNT_KEY",
+            "nameLocation": "212:19:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "198:37:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3681,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "198:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "31",
+              "id": 3682,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "234:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_1_by_1",
+                "typeString": "int_const 1"
+              },
+              "value": "1"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3686,
+            "mutability": "constant",
+            "name": "CONTRACT_ID_KEY",
+            "nameLocation": "256:15:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "242:33:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3684,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "242:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "32",
+              "id": 3685,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "274:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2_by_1",
+                "typeString": "int_const 2"
+              },
+              "value": "2"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3689,
+            "mutability": "constant",
+            "name": "ED25519_KEY",
+            "nameLocation": "296:11:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "282:29:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3687,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "282:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "33",
+              "id": 3688,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "310:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_3_by_1",
+                "typeString": "int_const 3"
+              },
+              "value": "3"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3692,
+            "mutability": "constant",
+            "name": "ECDSA_SECPK2561K1_KEY",
+            "nameLocation": "332:21:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "318:39:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3690,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "318:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "34",
+              "id": 3691,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "356:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_4_by_1",
+                "typeString": "int_const 4"
+              },
+              "value": "4"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3695,
+            "mutability": "constant",
+            "name": "DELEGATABLE_CONTRACT_ID_KEY",
+            "nameLocation": "378:27:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "364:45:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3693,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "364:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "35",
+              "id": 3694,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "408:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_5_by_1",
+                "typeString": "int_const 5"
+              },
+              "value": "5"
+            },
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3722,
+              "nodeType": "Block",
+              "src": "597:118:7",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 3720,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 3707,
+                      "name": "tokenKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3705,
+                      "src": "608:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 3710,
+                          "name": "keyType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3697,
+                          "src": "648:7:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "arguments": [
+                            {
+                              "id": 3712,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3699,
+                              "src": "676:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            {
+                              "id": 3713,
+                              "name": "key",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3701,
+                              "src": "690:3:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              }
+                            },
+                            {
+                              "arguments": [
+                                {
+                                  "hexValue": "30",
+                                  "id": 3716,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "kind": "number",
+                                  "lValueRequested": false,
+                                  "nodeType": "Literal",
+                                  "src": "703:1:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_0_by_1",
+                                    "typeString": "int_const 0"
+                                  },
+                                  "value": "0"
+                                }
+                              ],
+                              "expression": {
+                                "argumentTypes": [
+                                  {
+                                    "typeIdentifier": "t_rational_0_by_1",
+                                    "typeString": "int_const 0"
+                                  }
+                                ],
+                                "id": 3715,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "lValueRequested": false,
+                                "nodeType": "ElementaryTypeNameExpression",
+                                "src": "695:7:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_address_$",
+                                  "typeString": "type(address)"
+                                },
+                                "typeName": {
+                                  "id": 3714,
+                                  "name": "address",
+                                  "nodeType": "ElementaryTypeName",
+                                  "src": "695:7:7",
+                                  "typeDescriptions": {}
+                                }
+                              },
+                              "id": 3717,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "typeConversion",
+                              "lValueRequested": false,
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "src": "695:10:7",
+                              "tryCall": false,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              },
+                              {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            ],
+                            "id": 3711,
+                            "name": "createKeyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3816,
+                            "src": "657:18:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_uint256_$_t_bytes_memory_ptr_$_t_address_$returns$_t_struct$_KeyValue_$2304_memory_ptr_$",
+                              "typeString": "function (uint256,bytes memory,address) view returns (struct IHederaTokenService.KeyValue memory)"
+                            }
+                          },
+                          "id": 3718,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "657:49:7",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        ],
+                        "expression": {
+                          "id": 3708,
+                          "name": "IHederaTokenService",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2967,
+                          "src": "619:19:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_IHederaTokenService_$2967_$",
+                            "typeString": "type(contract IHederaTokenService)"
+                          }
+                        },
+                        "id": 3709,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "TokenKey",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 2310,
+                        "src": "619:28:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_struct$_TokenKey_$2310_storage_ptr_$",
+                          "typeString": "type(struct IHederaTokenService.TokenKey storage pointer)"
+                        }
+                      },
+                      "id": 3719,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "structConstructorCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "619:88:7",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "src": "608:99:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey memory"
+                    }
+                  },
+                  "id": 3721,
+                  "nodeType": "ExpressionStatement",
+                  "src": "608:99:7"
+                }
+              ]
+            },
+            "id": 3723,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSingleKey",
+            "nameLocation": "427:15:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3702,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3697,
+                  "mutability": "mutable",
+                  "name": "keyType",
+                  "nameLocation": "458:7:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "453:12:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3696,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "453:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3699,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "481:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "476:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3698,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "476:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3701,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "517:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "504:16:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3700,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "504:5:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "442:85:7"
+            },
+            "returnParameters": {
+              "id": 3706,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3705,
+                  "mutability": "mutable",
+                  "name": "tokenKey",
+                  "nameLocation": "587:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "551:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                    "typeString": "struct IHederaTokenService.TokenKey"
+                  },
+                  "typeName": {
+                    "id": 3704,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3703,
+                      "name": "IHederaTokenService.TokenKey",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2310,
+                      "src": "551:28:7"
+                    },
+                    "referencedDeclaration": 2310,
+                    "src": "551:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_storage_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "550:46:7"
+            },
+            "scope": 3817,
+            "src": "418:297:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3747,
+              "nodeType": "Block",
+              "src": "897:110:7",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 3745,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 3735,
+                      "name": "tokenKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3733,
+                      "src": "908:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 3738,
+                          "name": "keyType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3725,
+                          "src": "948:7:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "arguments": [
+                            {
+                              "id": 3740,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3727,
+                              "src": "976:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            {
+                              "hexValue": "",
+                              "id": 3741,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "990:2:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              "value": ""
+                            },
+                            {
+                              "id": 3742,
+                              "name": "key",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3729,
+                              "src": "994:3:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            ],
+                            "id": 3739,
+                            "name": "createKeyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3816,
+                            "src": "957:18:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_uint256_$_t_bytes_memory_ptr_$_t_address_$returns$_t_struct$_KeyValue_$2304_memory_ptr_$",
+                              "typeString": "function (uint256,bytes memory,address) view returns (struct IHederaTokenService.KeyValue memory)"
+                            }
+                          },
+                          "id": 3743,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "957:41:7",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        ],
+                        "expression": {
+                          "id": 3736,
+                          "name": "IHederaTokenService",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2967,
+                          "src": "919:19:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_IHederaTokenService_$2967_$",
+                            "typeString": "type(contract IHederaTokenService)"
+                          }
+                        },
+                        "id": 3737,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "TokenKey",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 2310,
+                        "src": "919:28:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_struct$_TokenKey_$2310_storage_ptr_$",
+                          "typeString": "type(struct IHederaTokenService.TokenKey storage pointer)"
+                        }
+                      },
+                      "id": 3744,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "structConstructorCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "919:80:7",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "src": "908:91:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey memory"
+                    }
+                  },
+                  "id": 3746,
+                  "nodeType": "ExpressionStatement",
+                  "src": "908:91:7"
+                }
+              ]
+            },
+            "id": 3748,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSingleKey",
+            "nameLocation": "732:15:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3730,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3725,
+                  "mutability": "mutable",
+                  "name": "keyType",
+                  "nameLocation": "763:7:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "758:12:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3724,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "758:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3727,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "786:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "781:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3726,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "781:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3729,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "817:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "809:11:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3728,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "809:7:7",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "747:80:7"
+            },
+            "returnParameters": {
+              "id": 3734,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3733,
+                  "mutability": "mutable",
+                  "name": "tokenKey",
+                  "nameLocation": "887:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "851:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                    "typeString": "struct IHederaTokenService.TokenKey"
+                  },
+                  "typeName": {
+                    "id": 3732,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3731,
+                      "name": "IHederaTokenService.TokenKey",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2310,
+                      "src": "851:28:7"
+                    },
+                    "referencedDeclaration": 2310,
+                    "src": "851:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_storage_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "850:46:7"
+            },
+            "scope": 3817,
+            "src": "723:284:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3815,
+              "nodeType": "Block",
+              "src": "1203:540:7",
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 3762,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 3760,
+                      "name": "keyValueType",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3750,
+                      "src": "1218:12:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "id": 3761,
+                      "name": "INHERIT_ACCOUNT_KEY",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3683,
+                      "src": "1234:19:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1218:35:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "condition": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 3772,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "id": 3770,
+                        "name": "keyValueType",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3750,
+                        "src": "1325:12:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "id": 3771,
+                        "name": "CONTRACT_ID_KEY",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3686,
+                        "src": "1341:15:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "src": "1325:31:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "falseBody": {
+                      "condition": {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 3782,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "id": 3780,
+                          "name": "keyValueType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3750,
+                          "src": "1427:12:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "id": 3781,
+                          "name": "ED25519_KEY",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3689,
+                          "src": "1443:11:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1427:27:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "falseBody": {
+                        "condition": {
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "id": 3792,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "id": 3790,
+                            "name": "keyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3750,
+                            "src": "1515:12:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "==",
+                          "rightExpression": {
+                            "id": 3791,
+                            "name": "ECDSA_SECPK2561K1_KEY",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3692,
+                            "src": "1531:21:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "1515:37:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": {
+                          "condition": {
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 3802,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "id": 3800,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3750,
+                              "src": "1621:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "==",
+                            "rightExpression": {
+                              "id": 3801,
+                              "name": "DELEGATABLE_CONTRACT_ID_KEY",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3695,
+                              "src": "1637:27:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "1621:43:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "id": 3810,
+                          "nodeType": "IfStatement",
+                          "src": "1617:119:7",
+                          "trueBody": {
+                            "id": 3809,
+                            "nodeType": "Block",
+                            "src": "1666:70:7",
+                            "statements": [
+                              {
+                                "expression": {
+                                  "id": 3807,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "leftHandSide": {
+                                    "expression": {
+                                      "id": 3803,
+                                      "name": "keyValue",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 3758,
+                                      "src": "1681:8:7",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                        "typeString": "struct IHederaTokenService.KeyValue memory"
+                                      }
+                                    },
+                                    "id": 3805,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": true,
+                                    "memberName": "delegatableContractId",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 2303,
+                                    "src": "1681:30:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_address",
+                                      "typeString": "address"
+                                    }
+                                  },
+                                  "nodeType": "Assignment",
+                                  "operator": "=",
+                                  "rightHandSide": {
+                                    "id": 3806,
+                                    "name": "keyAddress",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 3754,
+                                    "src": "1714:10:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_address",
+                                      "typeString": "address"
+                                    }
+                                  },
+                                  "src": "1681:43:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_address",
+                                    "typeString": "address"
+                                  }
+                                },
+                                "id": 3808,
+                                "nodeType": "ExpressionStatement",
+                                "src": "1681:43:7"
+                              }
+                            ]
+                          }
+                        },
+                        "id": 3811,
+                        "nodeType": "IfStatement",
+                        "src": "1511:225:7",
+                        "trueBody": {
+                          "id": 3799,
+                          "nodeType": "Block",
+                          "src": "1554:57:7",
+                          "statements": [
+                            {
+                              "expression": {
+                                "id": 3797,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftHandSide": {
+                                  "expression": {
+                                    "id": 3793,
+                                    "name": "keyValue",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 3758,
+                                    "src": "1569:8:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                      "typeString": "struct IHederaTokenService.KeyValue memory"
+                                    }
+                                  },
+                                  "id": 3795,
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": true,
+                                  "memberName": "ECDSA_secp256k1",
+                                  "nodeType": "MemberAccess",
+                                  "referencedDeclaration": 2301,
+                                  "src": "1569:24:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                    "typeString": "bytes memory"
+                                  }
+                                },
+                                "nodeType": "Assignment",
+                                "operator": "=",
+                                "rightHandSide": {
+                                  "id": 3796,
+                                  "name": "key",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 3752,
+                                  "src": "1596:3:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                    "typeString": "bytes memory"
+                                  }
+                                },
+                                "src": "1569:30:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "id": 3798,
+                              "nodeType": "ExpressionStatement",
+                              "src": "1569:30:7"
+                            }
+                          ]
+                        }
+                      },
+                      "id": 3812,
+                      "nodeType": "IfStatement",
+                      "src": "1423:313:7",
+                      "trueBody": {
+                        "id": 3789,
+                        "nodeType": "Block",
+                        "src": "1456:49:7",
+                        "statements": [
+                          {
+                            "expression": {
+                              "id": 3787,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftHandSide": {
+                                "expression": {
+                                  "id": 3783,
+                                  "name": "keyValue",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 3758,
+                                  "src": "1471:8:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                    "typeString": "struct IHederaTokenService.KeyValue memory"
+                                  }
+                                },
+                                "id": 3785,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": true,
+                                "memberName": "ed25519",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 2299,
+                                "src": "1471:16:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "nodeType": "Assignment",
+                              "operator": "=",
+                              "rightHandSide": {
+                                "id": 3786,
+                                "name": "key",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 3752,
+                                "src": "1490:3:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "src": "1471:22:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              }
+                            },
+                            "id": 3788,
+                            "nodeType": "ExpressionStatement",
+                            "src": "1471:22:7"
+                          }
+                        ]
+                      }
+                    },
+                    "id": 3813,
+                    "nodeType": "IfStatement",
+                    "src": "1321:415:7",
+                    "trueBody": {
+                      "id": 3779,
+                      "nodeType": "Block",
+                      "src": "1358:59:7",
+                      "statements": [
+                        {
+                          "expression": {
+                            "id": 3777,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftHandSide": {
+                              "expression": {
+                                "id": 3773,
+                                "name": "keyValue",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 3758,
+                                "src": "1373:8:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                  "typeString": "struct IHederaTokenService.KeyValue memory"
+                                }
+                              },
+                              "id": 3775,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "memberName": "contractId",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 2297,
+                              "src": "1373:19:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                              "id": 3776,
+                              "name": "keyAddress",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3754,
+                              "src": "1395:10:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "src": "1373:32:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "id": 3778,
+                          "nodeType": "ExpressionStatement",
+                          "src": "1373:32:7"
+                        }
+                      ]
+                    }
+                  },
+                  "id": 3814,
+                  "nodeType": "IfStatement",
+                  "src": "1214:522:7",
+                  "trueBody": {
+                    "id": 3769,
+                    "nodeType": "Block",
+                    "src": "1255:60:7",
+                    "statements": [
+                      {
+                        "expression": {
+                          "id": 3767,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftHandSide": {
+                            "expression": {
+                              "id": 3763,
+                              "name": "keyValue",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3758,
+                              "src": "1270:8:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                "typeString": "struct IHederaTokenService.KeyValue memory"
+                              }
+                            },
+                            "id": 3765,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "memberName": "inheritAccountKey",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 2295,
+                            "src": "1270:26:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "nodeType": "Assignment",
+                          "operator": "=",
+                          "rightHandSide": {
+                            "hexValue": "74727565",
+                            "id": 3766,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "bool",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1299:4:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            },
+                            "value": "true"
+                          },
+                          "src": "1270:33:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "id": 3768,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1270:33:7"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "id": 3816,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createKeyValueType",
+            "nameLocation": "1024:18:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3755,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3750,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "1058:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1053:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3749,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1053:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3752,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "1094:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1081:16:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3751,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1081:5:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3754,
+                  "mutability": "mutable",
+                  "name": "keyAddress",
+                  "nameLocation": "1116:10:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1108:18:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3753,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1108:7:7",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1042:91:7"
+            },
+            "returnParameters": {
+              "id": 3759,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3758,
+                  "mutability": "mutable",
+                  "name": "keyValue",
+                  "nameLocation": "1193:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1157:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                    "typeString": "struct IHederaTokenService.KeyValue"
+                  },
+                  "typeName": {
+                    "id": 3757,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3756,
+                      "name": "IHederaTokenService.KeyValue",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2304,
+                      "src": "1157:28:7"
+                    },
+                    "referencedDeclaration": 2304,
+                    "src": "1157:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_KeyValue_$2304_storage_ptr",
+                      "typeString": "struct IHederaTokenService.KeyValue"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1156:46:7"
+            },
+            "scope": 3817,
+            "src": "1015:728:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 3818,
+        "src": "148:1598:7",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:1706:7"
+  },
+  "legacyAST": {
+    "absolutePath": "project:/contracts/KeyHelper.sol",
+    "exportedSymbols": {
+      "HederaResponseCodes": [
+        1138
+      ],
+      "HederaTokenService": [
+        2260
+      ],
+      "IHederaTokenService": [
+        2967
+      ],
+      "KeyHelper": [
+        3817
+      ]
+    },
+    "id": 3818,
+    "license": "Apache-2.0",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3676,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0",
+          "<",
+          "0.9",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "40:31:7"
+      },
+      {
+        "id": 3677,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "73:33:7"
+      },
+      {
+        "absolutePath": "project:/contracts/HederaTokenService.sol",
+        "file": "./HederaTokenService.sol",
+        "id": 3678,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 3818,
+        "sourceUnit": 2261,
+        "src": "110:34:7",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 3679,
+              "name": "HederaTokenService",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2260,
+              "src": "170:18:7"
+            },
+            "id": 3680,
+            "nodeType": "InheritanceSpecifier",
+            "src": "170:18:7"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 3817,
+        "linearizedBaseContracts": [
+          3817,
+          2260,
+          1138
+        ],
+        "name": "KeyHelper",
+        "nameLocation": "157:9:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 3683,
+            "mutability": "constant",
+            "name": "INHERIT_ACCOUNT_KEY",
+            "nameLocation": "212:19:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "198:37:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3681,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "198:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "31",
+              "id": 3682,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "234:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_1_by_1",
+                "typeString": "int_const 1"
+              },
+              "value": "1"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3686,
+            "mutability": "constant",
+            "name": "CONTRACT_ID_KEY",
+            "nameLocation": "256:15:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "242:33:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3684,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "242:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "32",
+              "id": 3685,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "274:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2_by_1",
+                "typeString": "int_const 2"
+              },
+              "value": "2"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3689,
+            "mutability": "constant",
+            "name": "ED25519_KEY",
+            "nameLocation": "296:11:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "282:29:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3687,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "282:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "33",
+              "id": 3688,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "310:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_3_by_1",
+                "typeString": "int_const 3"
+              },
+              "value": "3"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3692,
+            "mutability": "constant",
+            "name": "ECDSA_SECPK2561K1_KEY",
+            "nameLocation": "332:21:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "318:39:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3690,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "318:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "34",
+              "id": 3691,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "356:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_4_by_1",
+                "typeString": "int_const 4"
+              },
+              "value": "4"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 3695,
+            "mutability": "constant",
+            "name": "DELEGATABLE_CONTRACT_ID_KEY",
+            "nameLocation": "378:27:7",
+            "nodeType": "VariableDeclaration",
+            "scope": 3817,
+            "src": "364:45:7",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3693,
+              "name": "uint",
+              "nodeType": "ElementaryTypeName",
+              "src": "364:4:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "hexValue": "35",
+              "id": 3694,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "408:1:7",
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_5_by_1",
+                "typeString": "int_const 5"
+              },
+              "value": "5"
+            },
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3722,
+              "nodeType": "Block",
+              "src": "597:118:7",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 3720,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 3707,
+                      "name": "tokenKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3705,
+                      "src": "608:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 3710,
+                          "name": "keyType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3697,
+                          "src": "648:7:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "arguments": [
+                            {
+                              "id": 3712,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3699,
+                              "src": "676:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            {
+                              "id": 3713,
+                              "name": "key",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3701,
+                              "src": "690:3:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              }
+                            },
+                            {
+                              "arguments": [
+                                {
+                                  "hexValue": "30",
+                                  "id": 3716,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "kind": "number",
+                                  "lValueRequested": false,
+                                  "nodeType": "Literal",
+                                  "src": "703:1:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_0_by_1",
+                                    "typeString": "int_const 0"
+                                  },
+                                  "value": "0"
+                                }
+                              ],
+                              "expression": {
+                                "argumentTypes": [
+                                  {
+                                    "typeIdentifier": "t_rational_0_by_1",
+                                    "typeString": "int_const 0"
+                                  }
+                                ],
+                                "id": 3715,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "lValueRequested": false,
+                                "nodeType": "ElementaryTypeNameExpression",
+                                "src": "695:7:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_address_$",
+                                  "typeString": "type(address)"
+                                },
+                                "typeName": {
+                                  "id": 3714,
+                                  "name": "address",
+                                  "nodeType": "ElementaryTypeName",
+                                  "src": "695:7:7",
+                                  "typeDescriptions": {}
+                                }
+                              },
+                              "id": 3717,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "typeConversion",
+                              "lValueRequested": false,
+                              "names": [],
+                              "nodeType": "FunctionCall",
+                              "src": "695:10:7",
+                              "tryCall": false,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              },
+                              {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            ],
+                            "id": 3711,
+                            "name": "createKeyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3816,
+                            "src": "657:18:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_uint256_$_t_bytes_memory_ptr_$_t_address_$returns$_t_struct$_KeyValue_$2304_memory_ptr_$",
+                              "typeString": "function (uint256,bytes memory,address) view returns (struct IHederaTokenService.KeyValue memory)"
+                            }
+                          },
+                          "id": 3718,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "657:49:7",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        ],
+                        "expression": {
+                          "id": 3708,
+                          "name": "IHederaTokenService",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2967,
+                          "src": "619:19:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_IHederaTokenService_$2967_$",
+                            "typeString": "type(contract IHederaTokenService)"
+                          }
+                        },
+                        "id": 3709,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "TokenKey",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 2310,
+                        "src": "619:28:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_struct$_TokenKey_$2310_storage_ptr_$",
+                          "typeString": "type(struct IHederaTokenService.TokenKey storage pointer)"
+                        }
+                      },
+                      "id": 3719,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "structConstructorCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "619:88:7",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "src": "608:99:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey memory"
+                    }
+                  },
+                  "id": 3721,
+                  "nodeType": "ExpressionStatement",
+                  "src": "608:99:7"
+                }
+              ]
+            },
+            "id": 3723,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSingleKey",
+            "nameLocation": "427:15:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3702,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3697,
+                  "mutability": "mutable",
+                  "name": "keyType",
+                  "nameLocation": "458:7:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "453:12:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3696,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "453:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3699,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "481:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "476:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3698,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "476:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3701,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "517:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "504:16:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3700,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "504:5:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "442:85:7"
+            },
+            "returnParameters": {
+              "id": 3706,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3705,
+                  "mutability": "mutable",
+                  "name": "tokenKey",
+                  "nameLocation": "587:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3723,
+                  "src": "551:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                    "typeString": "struct IHederaTokenService.TokenKey"
+                  },
+                  "typeName": {
+                    "id": 3704,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3703,
+                      "name": "IHederaTokenService.TokenKey",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2310,
+                      "src": "551:28:7"
+                    },
+                    "referencedDeclaration": 2310,
+                    "src": "551:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_storage_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "550:46:7"
+            },
+            "scope": 3817,
+            "src": "418:297:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3747,
+              "nodeType": "Block",
+              "src": "897:110:7",
+              "statements": [
+                {
+                  "expression": {
+                    "id": 3745,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 3735,
+                      "name": "tokenKey",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3733,
+                      "src": "908:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "arguments": [
+                        {
+                          "id": 3738,
+                          "name": "keyType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3725,
+                          "src": "948:7:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "arguments": [
+                            {
+                              "id": 3740,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3727,
+                              "src": "976:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            {
+                              "hexValue": "",
+                              "id": 3741,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "990:2:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              "value": ""
+                            },
+                            {
+                              "id": 3742,
+                              "name": "key",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3729,
+                              "src": "994:3:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            ],
+                            "id": 3739,
+                            "name": "createKeyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3816,
+                            "src": "957:18:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_uint256_$_t_bytes_memory_ptr_$_t_address_$returns$_t_struct$_KeyValue_$2304_memory_ptr_$",
+                              "typeString": "function (uint256,bytes memory,address) view returns (struct IHederaTokenService.KeyValue memory)"
+                            }
+                          },
+                          "id": 3743,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "957:41:7",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                            "typeString": "struct IHederaTokenService.KeyValue memory"
+                          }
+                        ],
+                        "expression": {
+                          "id": 3736,
+                          "name": "IHederaTokenService",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2967,
+                          "src": "919:19:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_IHederaTokenService_$2967_$",
+                            "typeString": "type(contract IHederaTokenService)"
+                          }
+                        },
+                        "id": 3737,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "TokenKey",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 2310,
+                        "src": "919:28:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_struct$_TokenKey_$2310_storage_ptr_$",
+                          "typeString": "type(struct IHederaTokenService.TokenKey storage pointer)"
+                        }
+                      },
+                      "id": 3744,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "structConstructorCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "919:80:7",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                        "typeString": "struct IHederaTokenService.TokenKey memory"
+                      }
+                    },
+                    "src": "908:91:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey memory"
+                    }
+                  },
+                  "id": 3746,
+                  "nodeType": "ExpressionStatement",
+                  "src": "908:91:7"
+                }
+              ]
+            },
+            "id": 3748,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createSingleKey",
+            "nameLocation": "732:15:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3730,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3725,
+                  "mutability": "mutable",
+                  "name": "keyType",
+                  "nameLocation": "763:7:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "758:12:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3724,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "758:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3727,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "786:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "781:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3726,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "781:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3729,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "817:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "809:11:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3728,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "809:7:7",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "747:80:7"
+            },
+            "returnParameters": {
+              "id": 3734,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3733,
+                  "mutability": "mutable",
+                  "name": "tokenKey",
+                  "nameLocation": "887:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3748,
+                  "src": "851:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_TokenKey_$2310_memory_ptr",
+                    "typeString": "struct IHederaTokenService.TokenKey"
+                  },
+                  "typeName": {
+                    "id": 3732,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3731,
+                      "name": "IHederaTokenService.TokenKey",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2310,
+                      "src": "851:28:7"
+                    },
+                    "referencedDeclaration": 2310,
+                    "src": "851:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_TokenKey_$2310_storage_ptr",
+                      "typeString": "struct IHederaTokenService.TokenKey"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "850:46:7"
+            },
+            "scope": 3817,
+            "src": "723:284:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 3815,
+              "nodeType": "Block",
+              "src": "1203:540:7",
+              "statements": [
+                {
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 3762,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 3760,
+                      "name": "keyValueType",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3750,
+                      "src": "1218:12:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "id": 3761,
+                      "name": "INHERIT_ACCOUNT_KEY",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3683,
+                      "src": "1234:19:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1218:35:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "condition": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 3772,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "id": 3770,
+                        "name": "keyValueType",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3750,
+                        "src": "1325:12:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "id": 3771,
+                        "name": "CONTRACT_ID_KEY",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3686,
+                        "src": "1341:15:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "src": "1325:31:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "falseBody": {
+                      "condition": {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 3782,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "id": 3780,
+                          "name": "keyValueType",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3750,
+                          "src": "1427:12:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "id": 3781,
+                          "name": "ED25519_KEY",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3689,
+                          "src": "1443:11:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1427:27:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "falseBody": {
+                        "condition": {
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "id": 3792,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "id": 3790,
+                            "name": "keyValueType",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3750,
+                            "src": "1515:12:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "==",
+                          "rightExpression": {
+                            "id": 3791,
+                            "name": "ECDSA_SECPK2561K1_KEY",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 3692,
+                            "src": "1531:21:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "1515:37:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": {
+                          "condition": {
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 3802,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "id": 3800,
+                              "name": "keyValueType",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3750,
+                              "src": "1621:12:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "==",
+                            "rightExpression": {
+                              "id": 3801,
+                              "name": "DELEGATABLE_CONTRACT_ID_KEY",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3695,
+                              "src": "1637:27:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "1621:43:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "id": 3810,
+                          "nodeType": "IfStatement",
+                          "src": "1617:119:7",
+                          "trueBody": {
+                            "id": 3809,
+                            "nodeType": "Block",
+                            "src": "1666:70:7",
+                            "statements": [
+                              {
+                                "expression": {
+                                  "id": 3807,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "leftHandSide": {
+                                    "expression": {
+                                      "id": 3803,
+                                      "name": "keyValue",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 3758,
+                                      "src": "1681:8:7",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                        "typeString": "struct IHederaTokenService.KeyValue memory"
+                                      }
+                                    },
+                                    "id": 3805,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": true,
+                                    "memberName": "delegatableContractId",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 2303,
+                                    "src": "1681:30:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_address",
+                                      "typeString": "address"
+                                    }
+                                  },
+                                  "nodeType": "Assignment",
+                                  "operator": "=",
+                                  "rightHandSide": {
+                                    "id": 3806,
+                                    "name": "keyAddress",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 3754,
+                                    "src": "1714:10:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_address",
+                                      "typeString": "address"
+                                    }
+                                  },
+                                  "src": "1681:43:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_address",
+                                    "typeString": "address"
+                                  }
+                                },
+                                "id": 3808,
+                                "nodeType": "ExpressionStatement",
+                                "src": "1681:43:7"
+                              }
+                            ]
+                          }
+                        },
+                        "id": 3811,
+                        "nodeType": "IfStatement",
+                        "src": "1511:225:7",
+                        "trueBody": {
+                          "id": 3799,
+                          "nodeType": "Block",
+                          "src": "1554:57:7",
+                          "statements": [
+                            {
+                              "expression": {
+                                "id": 3797,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftHandSide": {
+                                  "expression": {
+                                    "id": 3793,
+                                    "name": "keyValue",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 3758,
+                                    "src": "1569:8:7",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                      "typeString": "struct IHederaTokenService.KeyValue memory"
+                                    }
+                                  },
+                                  "id": 3795,
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": true,
+                                  "memberName": "ECDSA_secp256k1",
+                                  "nodeType": "MemberAccess",
+                                  "referencedDeclaration": 2301,
+                                  "src": "1569:24:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                    "typeString": "bytes memory"
+                                  }
+                                },
+                                "nodeType": "Assignment",
+                                "operator": "=",
+                                "rightHandSide": {
+                                  "id": 3796,
+                                  "name": "key",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 3752,
+                                  "src": "1596:3:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_bytes_memory_ptr",
+                                    "typeString": "bytes memory"
+                                  }
+                                },
+                                "src": "1569:30:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "id": 3798,
+                              "nodeType": "ExpressionStatement",
+                              "src": "1569:30:7"
+                            }
+                          ]
+                        }
+                      },
+                      "id": 3812,
+                      "nodeType": "IfStatement",
+                      "src": "1423:313:7",
+                      "trueBody": {
+                        "id": 3789,
+                        "nodeType": "Block",
+                        "src": "1456:49:7",
+                        "statements": [
+                          {
+                            "expression": {
+                              "id": 3787,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftHandSide": {
+                                "expression": {
+                                  "id": 3783,
+                                  "name": "keyValue",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 3758,
+                                  "src": "1471:8:7",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                    "typeString": "struct IHederaTokenService.KeyValue memory"
+                                  }
+                                },
+                                "id": 3785,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": true,
+                                "memberName": "ed25519",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 2299,
+                                "src": "1471:16:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "nodeType": "Assignment",
+                              "operator": "=",
+                              "rightHandSide": {
+                                "id": 3786,
+                                "name": "key",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 3752,
+                                "src": "1490:3:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes_memory_ptr",
+                                  "typeString": "bytes memory"
+                                }
+                              },
+                              "src": "1471:22:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bytes_memory_ptr",
+                                "typeString": "bytes memory"
+                              }
+                            },
+                            "id": 3788,
+                            "nodeType": "ExpressionStatement",
+                            "src": "1471:22:7"
+                          }
+                        ]
+                      }
+                    },
+                    "id": 3813,
+                    "nodeType": "IfStatement",
+                    "src": "1321:415:7",
+                    "trueBody": {
+                      "id": 3779,
+                      "nodeType": "Block",
+                      "src": "1358:59:7",
+                      "statements": [
+                        {
+                          "expression": {
+                            "id": 3777,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftHandSide": {
+                              "expression": {
+                                "id": 3773,
+                                "name": "keyValue",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 3758,
+                                "src": "1373:8:7",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                  "typeString": "struct IHederaTokenService.KeyValue memory"
+                                }
+                              },
+                              "id": 3775,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "memberName": "contractId",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 2297,
+                              "src": "1373:19:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "nodeType": "Assignment",
+                            "operator": "=",
+                            "rightHandSide": {
+                              "id": 3776,
+                              "name": "keyAddress",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3754,
+                              "src": "1395:10:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "src": "1373:32:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "id": 3778,
+                          "nodeType": "ExpressionStatement",
+                          "src": "1373:32:7"
+                        }
+                      ]
+                    }
+                  },
+                  "id": 3814,
+                  "nodeType": "IfStatement",
+                  "src": "1214:522:7",
+                  "trueBody": {
+                    "id": 3769,
+                    "nodeType": "Block",
+                    "src": "1255:60:7",
+                    "statements": [
+                      {
+                        "expression": {
+                          "id": 3767,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftHandSide": {
+                            "expression": {
+                              "id": 3763,
+                              "name": "keyValue",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 3758,
+                              "src": "1270:8:7",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                                "typeString": "struct IHederaTokenService.KeyValue memory"
+                              }
+                            },
+                            "id": 3765,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "memberName": "inheritAccountKey",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 2295,
+                            "src": "1270:26:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            }
+                          },
+                          "nodeType": "Assignment",
+                          "operator": "=",
+                          "rightHandSide": {
+                            "hexValue": "74727565",
+                            "id": 3766,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "bool",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "1299:4:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_bool",
+                              "typeString": "bool"
+                            },
+                            "value": "true"
+                          },
+                          "src": "1270:33:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "id": 3768,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1270:33:7"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "id": 3816,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "createKeyValueType",
+            "nameLocation": "1024:18:7",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3755,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3750,
+                  "mutability": "mutable",
+                  "name": "keyValueType",
+                  "nameLocation": "1058:12:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1053:17:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3749,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1053:4:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3752,
+                  "mutability": "mutable",
+                  "name": "key",
+                  "nameLocation": "1094:3:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1081:16:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3751,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1081:5:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3754,
+                  "mutability": "mutable",
+                  "name": "keyAddress",
+                  "nameLocation": "1116:10:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1108:18:7",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 3753,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1108:7:7",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1042:91:7"
+            },
+            "returnParameters": {
+              "id": 3759,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3758,
+                  "mutability": "mutable",
+                  "name": "keyValue",
+                  "nameLocation": "1193:8:7",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3816,
+                  "src": "1157:44:7",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_KeyValue_$2304_memory_ptr",
+                    "typeString": "struct IHederaTokenService.KeyValue"
+                  },
+                  "typeName": {
+                    "id": 3757,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3756,
+                      "name": "IHederaTokenService.KeyValue",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 2304,
+                      "src": "1157:28:7"
+                    },
+                    "referencedDeclaration": 2304,
+                    "src": "1157:28:7",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_KeyValue_$2304_storage_ptr",
+                      "typeString": "struct IHederaTokenService.KeyValue"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1156:46:7"
+            },
+            "scope": 3817,
+            "src": "1015:728:7",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 3818,
+        "src": "148:1598:7",
+        "usedErrors": []
+      }
+    ],
+    "src": "40:1706:7"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.6+commit.11564f7e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.3",
+  "updatedAt": "2022-11-16T05:20:51.852Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

@@ -1,8 +1,5 @@
 const { deployContract, createContractToken, mintToken, transferToken, associateToken } = require("../services/contractService.js");
 const { successResponse, errorResponse } = require('../utilities/response');
-let dgbaseURL = "https://testnet.dragonglass.me/transactions/";
-let hederabaseURL = `https://Namescan.io/#/${process.env.HEDERA_NETWORK}/transaction/`;
-let mirrorNodeApi = `https://${process.env.HEDERA_NETWORK}.mirrornode.hedera.com/api/v1/transactions/`
 
 exports.deployTokenContract = async (req, res) => {
     try {

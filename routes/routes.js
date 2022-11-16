@@ -1,6 +1,6 @@
 var express = require('express');
 var appRoute = express.Router();
-const { createToken, mintToken, createCollection, tokenTransfer, associateToken, userNFTs, scheduleTransaction, scheduleSignTransaction } = require('../controllers/tokenController.js');
+const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTransfer, associateToken, userNFTs, scheduleTransaction, scheduleSignTransaction } = require('../controllers/tokenController.js');
 const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, retrieveAuction } = require('../controllers/auctionController.js');
 const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
@@ -21,6 +21,8 @@ appRoute.get("/retrieveAuction", retrieveAuction)
 // TOKEN THROGH CONTRACT
 
 appRoute.post("/deployContract", deployTokenContract)
+
+appRoute.post("/contractTreasuryToken", contractTreasuryToken)
 
 appRoute.post("/createAccount",createAccount)
 

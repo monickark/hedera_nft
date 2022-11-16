@@ -16,12 +16,19 @@ const {
     TokenInfoQuery,
     AccountBalanceQuery,
     TokenBalanceQuery,
-    Hbar
+    Hbar,
+    ContractId,
+    ContractUpdateTransaction,
+    KeyList
 } = require("@hashgraph/sdk");
+require("dotenv").config();
+
 const axios = require('axios');
 const { createClient } = require('./client.js');
-require("dotenv").config();
 const Web3 = require("web3");
+const { Contract } = require("ethers");
+const myAccountId = process.env.MY_ACCOUNT_ID;
+const adminKey = process.env.MY_PRIVATE_KEY;
 
 async function getCustomFees(numerator, denominator, treasuryId) {
     try{
@@ -85,6 +92,70 @@ async function createTokenDetails(data) {
     } 
 }
 
+async function treasuryToken(data) {
+    try {
+        console.log("inside createTokenDetails..." + data.contractId)
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called....")
+               
+        // CREATE NFT WITH CUSTOM FEE
+        const nftCreate = new TokenCreateTransaction()
+            .setTokenName("TEST1")
+            .setTokenSymbol("TST1")
+            .setTreasuryAccountId(data.contractId)
+            .setTokenType(TokenType.NonFungibleUnique)
+            .setAutoRenewAccountId(data.contractId)
+            .setAutoRenewPeriod(7000000)
+            .setMaxSupply(500000000000)
+            .setSupplyType(TokenSupplyType.Finite)
+            .setSupplyKey(PrivateKey.fromString(adminKey))
+            .setMaxTransactionFee(new Hbar(30))
+            .freezeWith(client);
+
+        console.log("b4 sign");
+        let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(adminKey));
+        console.log("b4 execute");
+        let nftCreateSubmit = await nftCreateTxSign.execute(client);
+        console.log("b4 receipt");
+        console.log("nftCreateSubmit:"+JSON.stringify(nftCreateSubmit));
+        let nftCreateRx = await nftCreateSubmit.getReceipt(client);
+        console.log("nftCreateRx:"+JSON.stringify(nftCreateRx));
+        let tokenId = nftCreateRx.tokenId;
+        console.log(`Created NFT with Token ID: ${tokenId} \n`);
+
+//         const contractUpdate = await new ContractUpdateTransaction()
+//             .setContractId(data.contractId)
+//             .setAdminKey(new KeyList())
+//             .execute(client);
+//         const contractUpdateRx = await contractUpdate.getReceipt(client);
+ 
+// console.log("Contract update status: " + contractUpdateRx.status.toString());
+        
+        return tokenId;
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
+async function accountCreator(privateKey, initialBalance, client) {
+    const response = await new AccountCreateTransaction()
+        .setInitialBalance(new Hbar(initialBalance))
+        .setKey(privateKey.publicKey)
+        .execute(client);
+    const receipt = await response.getReceipt(client);
+    return receipt.accountId;
+ }
+
 async function mintNewToken(data) {
     try {
         console.log("inside mintNewToken...")
@@ -117,7 +188,7 @@ async function mintNewToken(data) {
         console.log("before receipt");
         //Get the transaction receipt
         let mintRx = await mintTxSubmit.getReceipt(client);
-
+        console.log("mintrx: "+ JSON.stringify(mintRx));
         //Log the serial number
         console.log(`- Created NFT ${data.tokenId} with serial: ${mintRx.serials[0].low} \n`);
         return outpuJSON = {
@@ -132,7 +203,7 @@ async function mintNewToken(data) {
 
 async function batchMintToken(data) {
     try {
-        console.log("inside mintNewToken...")
+        console.log("inside batch mint token...")
         let response = await createClient();
         if (response.err) {
             console.log("response.err", response.err);
@@ -370,5 +441,5 @@ async function userNFTs(data) {
 
 module.exports = {
     createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
-    scheduleTransaction, scheduleSignTransaction
+    scheduleTransaction, scheduleSignTransaction, treasuryToken
 }
