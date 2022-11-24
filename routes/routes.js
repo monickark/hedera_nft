@@ -1,7 +1,9 @@
 var express = require('express');
 var appRoute = express.Router();
-const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTransfer, associateToken, userNFTs, scheduleTransaction, scheduleSignTransaction } = require('../controllers/tokenController.js');
-const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, retrieveAuction } = require('../controllers/auctionController.js');
+const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTransfer, associateToken, userNFTs, 
+        scheduleTransaction, scheduleSignTransaction, associateTokenSign, transferTokenDiffUser,
+        transferTokenSign } = require('../controllers/tokenController.js');
+const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, claimAuction, retrieveAuction } = require('../controllers/auctionController.js');
 const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
@@ -16,6 +18,8 @@ appRoute.post("/placebid", placeBidAuction)
 
 appRoute.post("/settleAuction", settlementAuction)
 
+appRoute.post("/claimAuction", claimAuction)
+
 appRoute.get("/retrieveAuction", retrieveAuction)
 
 // TOKEN THROGH CONTRACT
@@ -26,64 +30,34 @@ appRoute.post("/contractTreasuryToken", contractTreasuryToken)
 
 appRoute.post("/createAccount",createAccount)
 
-appRoute.post(
-    "/createToken",[],
-    createToken
-)
+appRoute.post("/createToken",[], createToken)
 
-appRoute.post(
-    "/createContractToken",[],
-    createContractToken
-)
+appRoute.post("/createContractToken",[],  createContractToken)
 
-appRoute.post(
-    "/mintContractToken",[],
-    mintContractToken
-)
+appRoute.post("/mintContractToken",[], mintContractToken)
 
-appRoute.post(
-    "/transferContractToken",[],
-    transferContractToken
-)
+appRoute.post( "/transferContractToken",[], transferContractToken)
 
-appRoute.post(
-    "/associateContractToken",[],
-    associateContractToken
-)
+appRoute.post( "/associateContractToken",[], associateContractToken)
 
-appRoute.post(
-    "/mintToken",[],
-    mintToken
-)
+appRoute.post( "/transferTokenDiffUser",[], transferTokenDiffUser)
 
-appRoute.post(
-    "/createCollection",[],
-    createCollection
-)
+appRoute.post( "/transferTokenSign",[], transferTokenSign)
 
-appRoute.post(
-    "/tokenTransfer",[],
-    tokenTransfer
-)
+appRoute.post("/mintToken",[], mintToken)
 
-appRoute.post(
-    "/associateToken",[],
-    associateToken
-)
+appRoute.post( "/createCollection",[], createCollection)
 
-appRoute.get(
-    "/retrieveUserNfts",
-    userNFTs
-)
+appRoute.post( "/tokenTransfer",[], tokenTransfer)
 
-appRoute.post(
-    "/scheduleTransaction",[],
-    scheduleTransaction
-)
+appRoute.post( "/associateToken",[], associateToken)
 
-appRoute.post(
-    "/scheduleSignTransaction",[],
-    scheduleSignTransaction
-)
+appRoute.get( "/retrieveUserNfts", userNFTs)
+
+appRoute.post( "/scheduleTransaction",[], scheduleTransaction)
+
+appRoute.post( "/scheduleSignTransaction",[], scheduleSignTransaction)
+
+appRoute.post( "/associateTokensForSign",[], associateTokenSign)
 
 module.exports = appRoute;

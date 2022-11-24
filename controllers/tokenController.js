@@ -1,5 +1,6 @@
 const { createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
-    scheduleTransaction, scheduleSignTransaction, treasuryToken } = require("../services/tokenServices.js");
+    scheduleTransaction, scheduleSignTransaction, treasuryToken, associateTokensForSign, transferTokensWithDiff,
+    transferTokensWithSign } = require("../services/tokenServices.js");
 
 const { successResponse, errorResponse } = require('../utilities/response');
 
@@ -127,11 +128,95 @@ exports.tokenTransfer = async (req, res) => {
     }
 }
 
+exports.transferTokenSign = async (req, res) => {
+    try {        
+        console.log("Create transfer token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await transferTokensWithSign(req.body);  
+        console.log("RESPONSE address: "+ response);
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message,
+                "tokenId": response.tokenId,
+                "associatedId":response.associatedAcc
+
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Transfer Completed",  
+            "tokenId": response.tokenId,
+            "associatedId":response.associatedAcc
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
 exports.associateToken = async (req, res) => {
     try {        
         console.log("Create associate token started");
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await associateTokens(req.body);  
+        console.log("RESPONSE address: "+ response);
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message,
+                "tokenId": response.tokenId,
+                "associatedId":response.associatedAcc
+
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Association Granted",  
+            "tokenId": response.tokenId,
+            "associatedId":response.associatedAcc
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+exports.transferTokenDiffUser = async (req, res) => {
+    try {        
+        console.log("Create associate token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await transferTokensWithDiff(req.body);  
+        console.log("RESPONSE address: "+ response);
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message,
+                "tokenId": response.tokenId,
+                "associatedId":response.associatedAcc
+
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Transferred",  
+            "tokenId": response.tokenId,
+            "serialId":response.serialId
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+exports.associateTokenSign = async (req, res) => {
+    try {        
+        console.log("Create associate token started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await associateTokensForSign(req.body);  
         console.log("RESPONSE address: "+ response);
         if (response.err) {
             console.log("Error in controller: ", response.err);

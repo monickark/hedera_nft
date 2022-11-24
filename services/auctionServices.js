@@ -184,6 +184,42 @@ async function settleAuction(data) {
     } 
 }
 
+async function auctionClaim(data) {
+    try {
+        console.log("inside settle Auction: "+ JSON.stringify(data))
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called....")       
+        
+        // Create NFT using precompile function
+        const createToken = new ContractExecuteTransaction()
+        .setContractId(ContractId.fromString(data.contractId))
+        .setGas(3000000) // Increase if revert
+        .setFunction("claimAuction",
+            new ContractFunctionParameters()
+            .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
+            .addInt64(data.serialNumber) // base price
+            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
+
+        console.log("b4 execute");
+        const createTokenTx = await createToken.execute(client);
+        console.log("b4 recrd");
+        const createTokenRx = await createTokenTx.getRecord(client);
+        console.log("transactionId: "+createTokenRx.transactionId);
+        return createTokenRx.transactionId;
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
 async function getAuction(data) {
     try {
         console.log("inside get Auction: "+ JSON.stringify(data))
@@ -258,7 +294,7 @@ async function getAuctionDetails(data) {
 
         console.log("contract id inside contract call : " + data.contractId);
 
-        const functionAbi = contract.abi.find(func => (func.name === "bidder" && func.type === "function"));
+        const functionAbi = contract.abi.find(func => (func.name === "readyToClaim" && func.type === "function"));
         console.log("functionAbi : " + JSON.stringify(functionAbi))
         const encodedParametersHex = web3.eth.abi.encodeFunctionCall(functionAbi, []).slice(2);  
         // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
@@ -276,29 +312,29 @@ async function getAuctionDetails(data) {
          console.log("contract message: " + JSON.stringify(message));
          console.log("contract message: " + message.toString('hex'));
          let hexStr = message.toString('hex');
-         console.log("bidder: " + parseInt(hexStr, 16));
+         console.log("readyToClaim: " + parseInt(hexStr, 16));
 
          
-        //  console.log("************************   PRICE AMT  **********************************")
+         console.log("************************   PRICE AMT  **********************************")
 
-        //  const functionAbi1 = contract.abi.find(func => (func.name === "msgValue" && func.type === "function"));
-        // console.log("functionAbi : " + JSON.stringify(functionAbi1))
-        // const encodedParametersHex1 = web3.eth.abi.encodeFunctionCall(functionAbi1, []).slice(2);  
-        // // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
-        // const params1 =  Buffer.from(encodedParametersHex1, 'hex');
-        // // console.log("params : "+ params)
-        // const query1 = 
-        //  new ContractCallQuery()
-        //     .setContractId(ContractId.fromString(data.contractId))
-        //     .setGas(100000)
-        //     .setFunctionParameters(params1)
-        //  const contractCallResult1 = await query1.execute(client); 
-        //  // console.log("contract call result ",contractCallResult);       // Get the function value
-        //  const message1 = contractCallResult1.bytes;
-        //  console.log("contract message: " + JSON.stringify(message));
-        //  console.log("contract message: " + message1.toString('hex'));
-        //  let hexStr1 = message1.toString('hex');
-        //  console.log("msgValue: " + parseInt(hexStr1, 16));
+         const functionAbi1 = contract.abi.find(func => (func.name === "claimed" && func.type === "function"));
+        console.log("functionAbi : " + JSON.stringify(functionAbi1))
+        const encodedParametersHex1 = web3.eth.abi.encodeFunctionCall(functionAbi1, []).slice(2);  
+        // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
+        const params1 =  Buffer.from(encodedParametersHex1, 'hex');
+        // console.log("params : "+ params)
+        const query1 = 
+         new ContractCallQuery()
+            .setContractId(ContractId.fromString(data.contractId))
+            .setGas(100000)
+            .setFunctionParameters(params1)
+         const contractCallResult1 = await query1.execute(client); 
+         // console.log("contract call result ",contractCallResult);       // Get the function value
+         const message1 = contractCallResult1.bytes;
+         console.log("contract message: " + JSON.stringify(message));
+         console.log("contract message: " + message1.toString('hex'));
+         let hexStr1 = message1.toString('hex');
+         console.log("claimed: " + parseInt(hexStr1, 16));
 
         //  console.log("************************   MSG VALUE  **********************************")
 
@@ -332,5 +368,5 @@ async function getAuctionDetails(data) {
 }
 
 module.exports = {
-     deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails
+     deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails, auctionClaim
 }

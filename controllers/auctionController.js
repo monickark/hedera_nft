@@ -1,4 +1,4 @@
-const { deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails} = require("../services/auctionServices.js");
+const { deployContract, createAuctionDetails, placeBid, settleAuction, auctionClaim, getAuctionDetails} = require("../services/auctionServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 
 
@@ -89,6 +89,34 @@ exports.settlementAuction = async (req, res) => {
         console.log("Create place Bid started");
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await settleAuction(req.body);        
+        console.log("RESPONSE address: "+ response);
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Auction Settled Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Auction Settled",
+            "tokenId": response
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
+}
+
+exports.claimAuction = async (req, res) => {
+    try {        
+        console.log("Auction token claim started");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await auctionClaim(req.body);        
         console.log("RESPONSE address: "+ response);
         if (response.err) {
             console.log("Error", response.err);

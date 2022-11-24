@@ -18,31 +18,32 @@ contract AuctionContract is ExpiryHelper{
     address auctioner;
     address currentBidder;
     uint256 bidAmount;
+    bool readyToClaim;
+    bool claimed;
   }  
+
+   bool public readyToClaim;
+   bool public claimed;
    mapping(address => mapping(int64 => mapping(address => Auction))) public mapAuction;
-  address public bidder;
     /**
    * @notice createAuction
    * Function to start auction with first bid.
    * Validate signatures, stores NFT data and add first bid as well
    */
  
-   function createAuction(address tokenId, int64 serialNumber, uint256 basePrice) external payable {
-    
+   function createAuction(address tokenId, int64 serialNumber, uint256 basePrice) external payable {    
     require(basePrice > 0, 'Create Auction : Zero base price.');
-
     Auction storage NftOnAuction = mapAuction[tokenId][serialNumber][msg.sender];
     NftOnAuction.auctioner = msg.sender;
     NftOnAuction.bidAmount = basePrice;
     NftOnAuction.basePrice = basePrice;
   }
 
-    /**
+  /**
    * @notice placeBid
    * Function to place the bid on the nfts using native cryptocurrency and multiple erc20 token
    * @param _tokenId NFT unique ID
-   * @param _price bid price
-   
+   * @param _price bid price   
    * @param _auctioner Seller address
    */
   function placeBid(
@@ -53,7 +54,6 @@ contract AuctionContract is ExpiryHelper{
   ) public payable {
 
     Auction storage NftOnAuction = mapAuction [_tokenId][_serialNumber][_auctioner];  
-
     require(_price >= NftOnAuction.basePrice, 'Place Bid : Price Less Than the base price');
     require(_price > NftOnAuction.bidAmount, 'Place Bid : The price is less then the previous bid amount');
     require(msg.value == _price, 'Place Bid: Amount received and price should be same');
@@ -71,11 +71,25 @@ contract AuctionContract is ExpiryHelper{
     address _auctioner
   ) public {
     Auction storage NftOnAuction = mapAuction[_tokenId][_serialNumber][_auctioner];
-    bidder = NftOnAuction.currentBidder;
     require(msg.sender == NftOnAuction.auctioner, 'Settle Auction : Restricted to auctioner or admin!');
-    transferNonFungibleToken(_tokenId, address(this), NftOnAuction.currentBidder,  _serialNumber);
-    delete mapAuction[_tokenId][_serialNumber][_auctioner];
+    NftOnAuction.readyToClaim = true;
+    readyToClaim = true;
   }
+
+  function claimAuction(
+    address _tokenId,
+    int64 _serialNumber,
+    address _auctioner
+  ) public {
+    Auction storage NftOnAuction = mapAuction[_tokenId][_serialNumber][_auctioner];
+    require(NftOnAuction.readyToClaim == true, 'Claim Auction : Auction not settled yet!');
+    require(NftOnAuction.claimed == false, 'Claim Auction : Token already claimed!');
+    require(msg.sender == NftOnAuction.currentBidder, 'Claim Auction : Only auction wimmer can claim!');
+    transferNonFungibleToken(_tokenId, address(this), msg.sender,  _serialNumber);
+    NftOnAuction.claimed = true;
+    claimed = true;
+  }
+
   function transferNonFungibleToken(
     address token,
     address sender,
@@ -85,20 +99,6 @@ contract AuctionContract is ExpiryHelper{
  
     (int responseCode) = 
     HederaTokenService.transferNFT(token, sender, receiver, serialNumber);
-
-    if(responseCode != HederaResponseCodes.SUCCESS){
-        revert("Failed to create non-fungible token");
-    }
-  }
-
-  function approveNonFungibleToken(
-    address token,
-    address approved,
-    uint256 serialNumber
-  ) public payable {
- 
-    (int responseCode) = 
-    HederaTokenService.approveNFT(token, approved, serialNumber);
 
     if(responseCode != HederaResponseCodes.SUCCESS){
         revert("Failed to create non-fungible token");

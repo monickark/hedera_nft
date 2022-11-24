@@ -24,7 +24,7 @@ const {
 require("dotenv").config();
 
 const axios = require('axios');
-const { createClient } = require('./client.js');
+const { createClient, createClient1 } = require('./client.js');
 const Web3 = require("web3");
 const { Contract } = require("ethers");
 const myAccountId = process.env.MY_ACCOUNT_ID;
@@ -33,7 +33,7 @@ const adminKey = process.env.MY_PRIVATE_KEY;
 async function getCustomFees(numerator, denominator, treasuryId) {
     try{
     console.log("inside custom fee: "+ numerator, denominator, treasuryId);
-    let nftCustomFee = await new CustomRoyaltyFee()
+    let nftCustomFee = new CustomRoyaltyFee()
         .setNumerator(numerator)
         .setDenominator(denominator)
         .setFeeCollectorAccountId(AccountId.fromString(treasuryId))
@@ -70,7 +70,8 @@ async function createTokenDetails(data) {
             .setTreasuryAccountId(data.treasuryId)
             .setSupplyType(TokenSupplyType.Finite)
             .setMaxSupply(data.maxSupply)
-            //.setCustomFees([await getCustomFees(data.numerator, data.denominator, data.treasuryId)])
+            .setCustomFees([await getCustomFees(data.numerator, data.denominator, data.treasuryId)])
+            .setMaxTransactionFee(new Hbar(50))
             .setAdminKey(PrivateKey.fromString(data.treasuryKey))
             .setSupplyKey(PrivateKey.fromString(data.supplyKey))
             .freezeWith(client)
@@ -81,7 +82,7 @@ async function createTokenDetails(data) {
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
         console.log("b4 receipt");
         console.log("nftCreateSubmit:"+JSON.stringify(nftCreateSubmit));
-        let nftCreateRx = await nftCreateSubmit.getReceipt(client);
+        let nftCreateRx = await nftCreateSubmit.getReceipt(client1);
         console.log("nftCreateRx:"+JSON.stringify(nftCreateRx));
         let tokenId = nftCreateRx.tokenId;
         console.log(`Created NFT with Token ID: ${tokenId} \n`);
@@ -124,7 +125,7 @@ async function treasuryToken(data) {
         console.log("b4 sign");
         let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(adminKey));
         console.log("b4 execute");
-        let nftCreateSubmit = await nftCreateTxSign.execute(client);
+        let nftCreateSubmit = await nftCreateTxSign.execute(client1);
         console.log("b4 receipt");
         console.log("nftCreateSubmit:"+JSON.stringify(nftCreateSubmit));
         let nftCreateRx = await nftCreateSubmit.getReceipt(client);
@@ -231,6 +232,41 @@ async function batchMintToken(data) {
     } 
 }
 
+async function transferTokensWithSign(data) {
+    try {
+        console.log("inside transfer NFT Tokens...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called...");
+        // Sign with the sender key to authorize the transfer        
+        let transaction = await new TransferTransaction()
+            .addNftTransfer(data.tokenId, data.serialId, data.senderId, data.receiverId)
+            .freezeWith(client)
+    
+            // encode 1
+            const transactionDTO1 = transaction.toBytes();
+            const transactionDTO1Armoured =  Buffer.from(transactionDTO1).toString('base64');
+    
+            console.log(`Encoded1: ${transactionDTO1Armoured}`);
+            
+            return outpuJSON = {
+                tokenId: data.tokenId,
+                retObj: data.transactionDTO1Armoured
+            };
+     
+    } catch(error) {
+            console.log("Error : "+ error)
+        } 
+}
+
 async function transferTokens(data) {
     try {
         console.log("inside transfer NFT Tokens...")
@@ -262,7 +298,6 @@ async function transferTokens(data) {
         return outpuJSON = {
             tokenId: data.tokenId,
             serialId: data.serialId
-
         };
      
     } catch(error) {
@@ -304,6 +339,87 @@ async function associateTokens(data) {
         return outpuJSON = {
             tokenId: data.tokenId,
             associatedAcc: data.associatedId
+        };
+     
+} catch(error) {
+        console.log("Error : "+ error)
+        let outpuJSON = {
+            message: "Token association already granted",
+            err: error
+        };
+        return outpuJSON;
+    } 
+}
+
+async function transferTokensWithDiff(data) {
+    try {
+        console.log("inside transfer NFT Tokens...")
+        let response = await createClient();
+        let response1 = await createClient1();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        client1 = response1.client;
+        console.log("client called...");
+        // Sign with the sender key to authorize the transfer        
+        let tokenTransferTx = await new TransferTransaction()
+            .addNftTransfer(data.tokenId, data.serialId, data.senderId, data.receiverId)
+            .freezeWith(client)
+         //   .sign(PrivateKey.fromString(data.senderKey));
+            
+        console.log("b4 sign" + tokenTransferTx)
+       // console.log("b4 sign" + JSON.stringify(tokenTransferTx))
+        let tokenTransferSubmit = await tokenTransferTx.execute(client);
+        console.log("b4 execute")
+        let tokenTransferRx = await tokenTransferSubmit.getReceipt(client);
+
+        console.log(`\n- NFT transfer from Sender to Receiver: ${tokenTransferRx.status} \n`);
+   
+        return outpuJSON = {
+            tokenId: data.tokenId,
+            serialId: data.serialId
+        };
+     
+    } catch(error) {
+            console.log("Error : "+ error)
+        } 
+}
+
+async function associateTokensForSign(data) {
+    try {
+        console.log("inside associateTokensForSign...")
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called...");
+        //Create the associate transaction and sign with Receiver's key 
+        let transaction = new TokenAssociateTransaction()
+        .setAccountId(data.associatedId)
+        .setTokenIds([data.tokenId])
+        .freezeWith(client);
+
+        // encode 1
+        const transactionDTO1 = transaction.toBytes();
+        const transactionDTO1Armoured =  Buffer.from(transactionDTO1).toString('base64');
+
+        console.log(`Encoded1: ${transactionDTO1Armoured}`);
+        
+        return outpuJSON = {
+            tokenId: data.tokenId,
+            retObj: data.transactionDTO1Armoured
         };
      
 } catch(error) {
@@ -410,6 +526,7 @@ async function scheduleSignTransaction(data) {
     } 
 }
 
+
 async function userNFTs(data) {
     
     let tokenArr = []
@@ -441,5 +558,6 @@ async function userNFTs(data) {
 
 module.exports = {
     createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
-    scheduleTransaction, scheduleSignTransaction, treasuryToken
+    scheduleTransaction, scheduleSignTransaction, treasuryToken, associateTokensForSign, transferTokensWithDiff,
+    transferTokensWithSign
 }
