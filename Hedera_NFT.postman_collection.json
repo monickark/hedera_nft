@@ -1,0 +1,870 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Hedera_NFT",
+		"_postman_id": "06272446-d71d-d4c9-0912-df66b5d774d1",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"description": "",
+			"item": [
+				{
+					"name": "NFT:/createAccount",
+					"request": {
+						"url": "{{host}}/createAccount",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"initBal\":\"800000000000\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "APIs",
+			"description": "",
+			"item": [
+				{
+					"name": "USER BAL",
+					"request": {
+						"url": {
+							"raw": "https://testnet.mirrornode.hedera.com/api/v1/accounts?account.id=0.0.48664980",
+							"protocol": "https",
+							"host": [
+								"testnet",
+								"mirrornode",
+								"hedera",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"accounts"
+							],
+							"query": [
+								{
+									"key": "account.id",
+									"value": "0.0.48664980",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "USER NFT",
+					"request": {
+						"url": "https://testnet.mirrornode.hedera.com/api/v1/accounts/0.0.48664980/nfts",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Schedule",
+			"description": "",
+			"item": [
+				{
+					"name": "NFT:/scheduleTxion",
+					"request": {
+						"url": "{{host}}/scheduleTransaction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"senderId\":\"0.0.48664975\",\n    \"receiverId\":\"0.0.48664980\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/scheduleSigntxion",
+					"request": {
+						"url": "{{host}}/scheduleSignTransaction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\n    \"scheduleId\":\"0.0.48744617\",\n    \"senderKey\":\"3030020100300706052b8104000a0422042045f9e756269572da3fda5f414b27b48b22015f81bbd1b7e8365e6cd61de13abe\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auction",
+			"description": "",
+			"item": [
+				{
+					"name": "NFT:/associateToken",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":\"0.0.48895604\",\n    \"associatedId\":\"0.0.48664980\",\n    \"associatedKey\":\"3030020100300706052b8104000a0422042045f9e756269572da3fda5f414b27b48b22015f81bbd1b7e8365e6cd61de13abe\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/deployAuctionContract",
+					"request": {
+						"url": "{{host}}/deployAuctionContract",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/createAuction",
+					"request": {
+						"url": "{{host}}/createAuction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":\"0.0.48887632\",\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":14,\n    \"basePrice\":2\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/walletAssociate",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48836695\",\n    \"associatedKey\":\"3030020100300706052b8104000a04220420eb339abc3d432029d95a8f931508680b4a1e3ecb94ec94c5e0175e80ce5f6f4b\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/settleAuction",
+					"request": {
+						"url": "{{host}}/settleAuction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":3,\n    \"walletAcct\":\"0.0.48836695\",\n    \"auctioner\":\"0.0.48636148\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/retrieveAuction",
+					"request": {
+						"url": {
+							"raw": "{{host}}/retrieveAuction?contractId=0.0.48859359&tokenId=0.0.48837392&serialNumber=13&auctioner=0.0.19053020",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"retrieveAuction"
+							],
+							"query": [
+								{
+									"key": "contractId",
+									"value": "0.0.48859359",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "tokenId",
+									"value": "0.0.48837392",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "serialNumber",
+									"value": "13",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "auctioner",
+									"value": "0.0.19053020",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":3,\n    \"walletAcct\":\"0.0.48836695\",\n    \"auctioner\":\"0.0.48636148\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/placebid",
+					"request": {
+						"url": "{{host}}/placebid",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":\"0.0.48887632\",\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":14,\n    \"price\":10,\n    \"auctioner\":\"0.0.19053020\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Token",
+			"description": "",
+			"item": [
+				{
+					"name": "NFT:/createToken",
+					"request": {
+						"url": "{{host}}/createToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenName\":\"ACCUBITS NFT\",\n    \"tokenSymbol\":\"ACC\",\n    \"treasuryId\":\"0.0.19053020\",\n    \"treasuryKey\":\"e563e25da29c40acedb7a7f6fe3ddfb502d33feb4cfae7aa7b4564b8ec834b4f\",\n    \"decimals\":\"0\",\n    \"initialSupply\":\"0\",\n    \"numerator\":\"5\",\n    \"denominator\":\"10\",\n    \"maxSupply\":\"500000000000\",\n    \"supplyKey\":\"3030020100300706052b8104000a042204203b28b7b961201b3aab7a2f274b49b0c4f5b5b58bc79a37c9715855b84b0bd2e7\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/mintToken",
+					"request": {
+						"url": "{{host}}/mintToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":\"0.0.48890257\",\n    \"metadata\":\"QmTzWcVfk88JRqjTpVwHzBeULRTNzHY7mnBSG42CpwHmPa\",\n    \"supplyKey\":\"e563e25da29c40acedb7a7f6fe3ddfb502d33feb4cfae7aa7b4564b8ec834b4f\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/createCollection",
+					"request": {
+						"url": "{{host}}/createCollection",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"supplyKey\":\"3030020100300706052b8104000a042204203b28b7b961201b3aab7a2f274b49b0c4f5b5b58bc79a37c9715855b84b0bd2e7\",\n    \"metadata\":[\"ipfs://bafyreie3ichmqul4xa7e6xcy34tylbuq2vf3gnjf7c55trg3b6xyjr4bku/metadata.json\",\"ipfs://bafyreicfldhlnndodwm4xe7473e2gkhyu5frhsb5rvcyq5hv4jao7f6uvu/metadata.json\", \"ipfs://bafyreia6ow6phsk7gdef6kzlgagfamxmujp47ue7rxymo6wr2qtenrzaeu/metadata.json\", \"ipfs://bafyreiax45o6ardirmfk6ua37vbnlkgpvwklntlqh5z5ohsby3tk5ep7oe/metadata.json\",\"ipfs://bafyreia34awv7lszb7nia2yiwsbbbefdkbr3buo22wbgk3mwwmuhk2rsby/metadata.json\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/associateToken",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48592520\",\n    \"associatedKey\":\"302e020100300506032b6570042204202d246959e0248f5cd5cf94d546ca4c0734ea71df25d359286572699a0dc0adbd\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/associateTokenForSign",
+					"request": {
+						"url": "{{host}}/associateTokensForSign",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48592520\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/tokenTransfer",
+					"request": {
+						"url": "{{host}}/tokenTransfer",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"serialId\":\"15\",\n    \"senderId\":\"0.0.19053020\",\n    \"senderKey\":\"e563e25da29c40acedb7a7f6fe3ddfb502d33feb4cfae7aa7b4564b8ec834b4f\",\n    \"receiverId\":\"0.0.48592520\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/tokenTransferSign",
+					"request": {
+						"url": "{{host}}/transferTokenSign",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"serialId\":\"15\",\n    \"senderId\":\"0.0.48592520\",\n    \"receiverId\":\"0.0.48664980\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/tokenTransferDiffUser",
+					"request": {
+						"url": "{{host}}/transferTokenDiffUser",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"serialId\":\"11\",\n    \"senderId\":\"0.0.19053020\",\n    \"senderKey\":\"e563e25da29c40acedb7a7f6fe3ddfb502d33feb4cfae7aa7b4564b8ec834b4f\",\n    \"receiverId\":\"0.0.48664980\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/Secondaryassociate",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48644174\",\n    \"associatedKey\":\"3030020100300706052b8104000a042204201a075ce2ec08d950b5eb2c466409f447047d91b2d7c19ff552f447a34bff8bb2\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/secondaryTransfer",
+					"request": {
+						"url": "{{host}}/tokenTransfer",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"serialId\":\"1\",\n    \"senderId\":\"0.0.48664980\",\n    \"senderKey\":\"3030020100300706052b8104000a0422042045f9e756269572da3fda5f414b27b48b22015f81bbd1b7e8365e6cd61de13abe\",\n    \"receiverId\":\"0.0.48644174\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contract",
+			"description": "",
+			"item": [
+				{
+					"name": "NFT:/deployContract",
+					"request": {
+						"url": "{{host}}/deployContract",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/createContractToken",
+					"request": {
+						"url": "{{host}}/createContractToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":\"0.0.48880761\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/mintContractToken",
+					"request": {
+						"url": "{{host}}/mintContractToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"contractId\":\"0.0.48709726\",\n     \"token\":\"0.0.48709838\",\n     \"amount\":1,\n     \"metadata\":[\"ipfs://bafyreie3ichmqul4xa7e6xcy34tylbuq2vf3gnjf7c55trg3b6xyjr4bku/metadata.json\"]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/associateContractToken",
+					"request": {
+						"url": "{{host}}/associateContractToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"contractId\":\"0.0.48890246\",\n    \"token\":\"0.0.48890257\",\n    \"address\":\"0.0.48664980\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/transferContractToken",
+					"request": {
+						"url": "{{host}}/transferContractToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"contractId\":{{contractId}},\n    \"token\":{{tokenId}},\n    \"sender\":\"0.0.19053020\",\n    \"receiver\":\"0.0.48664980\",\n    \"serialNumber\":\"4\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/walletAssociate",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48836695\",\n    \"associatedKey\":\"3030020100300706052b8104000a04220420eb339abc3d432029d95a8f931508680b4a1e3ecb94ec94c5e0175e80ce5f6f4b\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/secondaryTokenTransfer",
+					"request": {
+						"url": "{{host}}/transferContractToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"contractId\":{{contractId}},\n    \"token\":{{tokenId}},\n    \"sender\":\"0.0.48664980\",\n    \"receiver\":\"0.0.48644174\",\n    \"serialNumber\":\"4\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ContractTreasuryAuction",
+			"description": "",
+			"item": [
+				{
+					"name": "Auction:/deployAuctionContract",
+					"request": {
+						"url": "{{host}}/deployAuctionContract",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/contractTreasuryToken",
+					"request": {
+						"url": "{{host}}/contractTreasuryToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}}\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "NFT:/mintToken",
+					"request": {
+						"url": "{{host}}/mintToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"metadata\":\"QmTzWcVfk88JRqjTpVwHzBeULRTNzHY7mnBSG42CpwHmPa\",\n    \"supplyKey\":\"e563e25da29c40acedb7a7f6fe3ddfb502d33feb4cfae7aa7b4564b8ec834b4f\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/createAuction",
+					"request": {
+						"url": "{{host}}/createAuction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":1,\n    \"basePrice\":1\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/retrieveAuction",
+					"request": {
+						"url": {
+							"raw": "{{host}}/retrieveAuction?contractId=0.0.48907653",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"retrieveAuction"
+							],
+							"query": [
+								{
+									"key": "contractId",
+									"value": "0.0.48907653",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":3,\n    \"walletAcct\":\"0.0.48836695\",\n    \"auctioner\":\"0.0.48636148\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/placebid",
+					"request": {
+						"url": "{{host}}/placebid",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":1,\n    \"price\":2,\n    \"auctioner\":\"0.0.19053020\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/settleAuction",
+					"request": {
+						"url": "{{host}}/settleAuction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":1,\n    \"auctioner\":\"0.0.19053020\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/walletAssociate",
+					"request": {
+						"url": "{{host}}/associateToken",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tokenId\":{{tokenId}},\n    \"associatedId\":\"0.0.48636148\",\n    \"associatedKey\":\"3030020100300706052b8104000a042204207fc9374552c95b90008c0b7d5c5daf78f472bfc8c18d25447178f8f64a4e2a94\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Auction:/claimToken",
+					"request": {
+						"url": "{{host}}/claimAuction",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"contractId\":{{contractId}},\n    \"tokenId\":{{tokenId}},\n    \"serialNumber\":1,\n    \"auctioner\":\"0.0.19053020\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

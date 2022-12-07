@@ -86,7 +86,7 @@ exports.placeBidAuction = async (req, res) => {
 
 exports.settlementAuction = async (req, res) => {
     try {        
-        console.log("Create place Bid started");
+        console.log("Settle Auction started");
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await settleAuction(req.body);        
         console.log("RESPONSE address: "+ response);

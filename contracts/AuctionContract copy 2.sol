@@ -16,11 +16,9 @@ contract AuctionContract is ExpiryHelper {
     int64 serialNumber;
     uint256 basePrice;
     address auctioner;
-    address treasurer;
+    address admin;
     address currentBidder;
     uint256 bidAmount;
-    bool readyToClaim;
-    bool claimed;
   }  
 
    mapping(address => mapping(int64 => mapping(address => Auction))) public mapAuction;
@@ -30,16 +28,14 @@ contract AuctionContract is ExpiryHelper {
    * Validate signatures, stores NFT data and add first bid as well
    */
   // token owner is the caller
-   function createAuction(address tokenId, int64 serialNumber, uint256 basePrice, address treasuryId) external {    
+   function createAuction(address tokenId, int64 serialNumber, uint256 basePrice, address adminAcc) external payable {    
     require(basePrice > 0, 'Create Auction : Zero base price.');
-    if(msg.sender != treasuryId) {      
-    transferNonFungibleToken(tokenId, msg.sender, treasuryId, serialNumber);
-    }
+    transferNonFungibleToken(tokenId, msg.sender, adminAcc, serialNumber);
     Auction storage NftOnAuction = mapAuction[tokenId][serialNumber][msg.sender];
     NftOnAuction.auctioner = msg.sender;
     NftOnAuction.bidAmount = basePrice;
     NftOnAuction.basePrice = basePrice;
-    NftOnAuction.treasurer = treasuryId;
+    NftOnAuction.admin = adminAcc;
   }
 
   /**
@@ -65,28 +61,19 @@ contract AuctionContract is ExpiryHelper {
       payable(NftOnAuction.currentBidder).transfer(NftOnAuction.bidAmount);
     }
     NftOnAuction.bidAmount = _price;
-    NftOnAuction.currentBidder = msg.sender; 
+    NftOnAuction.currentBidder = msg.sender;
   }
 
   // admin account is the caller, allowance set to adminacc, bidwinner(NftOnAuction.currentBidder)
   function settleAuction(
     address _tokenId,
     int64 _serialNumber,
-    address _auctioner,
-    uint256 royaltyPercentage,
-    address payable royaltyId
+    address _auctioner
   ) public {
     Auction storage NftOnAuction = mapAuction[_tokenId][_serialNumber][_auctioner];
-    require(msg.sender == NftOnAuction.treasurer, 'Settle Auction : Restricted to treasurer!');
-    NftOnAuction.readyToClaim = true;
-
-    uint256 royltyFee = (NftOnAuction.bidAmount*royaltyPercentage)/10000;
-    uint256 tokenFee = NftOnAuction.bidAmount - royltyFee;
-
-    payable(royaltyId).transfer(royltyFee);
-    payable(_auctioner).transfer(tokenFee);
-    
-    transferNonFungibleToken(_tokenId, msg.sender, NftOnAuction.currentBidder,  _serialNumber);
+    require(msg.sender == NftOnAuction.admin, 'Settle Auction : Restricted to auctioner or admin!');    
+    transferNonFungibleToken(_tokenId, msg.sender, NftOnAuction.currentBidder, _serialNumber);
+    delete mapAuction[_tokenId][_serialNumber][_auctioner];
   }
 
   function transferNonFungibleToken(
@@ -95,7 +82,7 @@ contract AuctionContract is ExpiryHelper {
     address receiver,
     int64 serialNumber
   ) public {
- 
+     
     (int responseCode) = 
     HederaTokenService.transferNFT(token, sender, receiver, serialNumber);
 

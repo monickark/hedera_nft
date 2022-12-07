@@ -1,6 +1,6 @@
 const { createTokenDetails, mintNewToken, batchMintToken, transferTokens, associateTokens, userNFTs,
     scheduleTransaction, scheduleSignTransaction, treasuryToken, associateTokensForSign, transferTokensWithDiff,
-    transferTokensWithSign } = require("../services/tokenServices.js");
+    transferTokensWithSign, scheduleSignTransactionObj } = require("../services/tokenServices.js");
 
 const { successResponse, errorResponse } = require('../utilities/response');
 
@@ -20,6 +20,7 @@ exports.createToken = async (req, res) => {
         }
         let outputJSON = {
             "message": "Token Created",
+            "transanctionId": response.txionId,
             "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
         }
         return successResponse(res, outputJSON);
@@ -114,6 +115,7 @@ exports.tokenTransfer = async (req, res) => {
         }
         let outputJSON = {
             "message": "Token transfer",  
+            "transanctionId": response.txionId,
             "tokenId": response.tokenId
         }
         return successResponse(res, outputJSON);
@@ -297,6 +299,30 @@ exports.scheduleSignTransaction = async (req, res) => {
         console.log("schedule Sign Transaction started");
         console.log("Token body params: " + JSON.stringify(req.body));
         let response = await scheduleSignTransaction(req.body);  
+        if (response.err) {
+            console.log("Error in controller: ", response.err);
+            let errorJSON = {
+                "message": response.message
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Transaction Scheduled",  
+            "scheduleId":response.scheduleId1,
+            "status":response.txStatus
+        }
+        return successResponse(res, outputJSON);
+
+    } catch (error) {
+        console.log("Error", error)
+    }
+}
+
+exports.scheduleSignTransactionObj = async (req, res) => {
+    try {        
+        console.log("schedule Sign Transaction object");
+        console.log("Token body params: " + JSON.stringify(req.body));
+        let response = await scheduleSignTransactionObj(req.body);  
         if (response.err) {
             console.log("Error in controller: ", response.err);
             let errorJSON = {

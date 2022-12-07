@@ -10,18 +10,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@hashgraph/sdk": "^2.18.2",
-    "@openzeppelin/contracts": "^4.7.3",
-    "@truffle/hdwallet-provider": "^2.1.0",
-    "body-parser": "^1.20.0",
+    "@hashgraph/sdk": "^2.19.0",
+    "@openzeppelin/contracts": "^4.8.0",
+    "@truffle/hdwallet-provider": "^2.1.2",
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "ethers": "^5.7.1",
-    "express": "^4.18.1",
+    "ethers": "^5.7.2",
+    "express": "^4.18.2",
     "express-validator": "^6.14.2",
     "solc": "^0.8.17",
     "truffle-hdwallet-provider": "^1.0.17",
-    "truffle-plugin-verify": "^0.5.28",
-    "web3": "^1.8.0"
+    "truffle-plugin-verify": "^0.5.33",
+    "web3": "^1.8.1"
   }
 }

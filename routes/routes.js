@@ -1,12 +1,19 @@
 var express = require('express');
 var appRoute = express.Router();
+const { getAccountInfo, transferBalance } = require('../controllers/accountController.js');
 const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTransfer, associateToken, userNFTs, 
         scheduleTransaction, scheduleSignTransaction, associateTokenSign, transferTokenDiffUser,
-        transferTokenSign } = require('../controllers/tokenController.js');
+        transferTokenSign, scheduleSignTransactionObj } = require('../controllers/tokenController.js');
 const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, claimAuction, retrieveAuction } = require('../controllers/auctionController.js');
 const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
+
+// ACCOUNT
+
+appRoute.post("/getAccountInfo", getAccountInfo)
+
+appRoute.post("/transferBalance", transferBalance)
 
 // AUCTION ROUTES
 
@@ -57,6 +64,8 @@ appRoute.get( "/retrieveUserNfts", userNFTs)
 appRoute.post( "/scheduleTransaction",[], scheduleTransaction)
 
 appRoute.post( "/scheduleSignTransaction",[], scheduleSignTransaction)
+
+appRoute.post( "/scheduleSignTransactionObj",[], scheduleSignTransactionObj)
 
 appRoute.post( "/associateTokensForSign",[], associateTokenSign)
 

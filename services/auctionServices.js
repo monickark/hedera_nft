@@ -10,7 +10,8 @@ const {
     AccountBalanceQuery,
     AccountId,
     TokenId,
-    ContractId
+    ContractId,
+    AccountAllowanceApproveTransaction
 } = require("@hashgraph/sdk");
 const fs = require("fs");
 const bytecode = fs.readFileSync(
@@ -87,15 +88,19 @@ async function createAuctionDetails(data) {
         console.log("client called....")       
         
         // Create NFT using precompile function
-        const createToken = new ContractExecuteTransaction()
+        const createToken = await new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
-        .setPayableAmount(data.basePrice) // Increase if revert
+       // .setPayableAmount(data.basePrice) // Increase if revert
         .setFunction("createAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price            
-            .addUint256(data.basePrice*(10e7))); // base price)
+            .addUint256(data.basePrice*(10e7))
+            .addAddress(AccountId.fromString(data.treasuryId).toSolidityAddress()))
+            .freezeWith(client); // base price)
+       // const createToken = await ct.sign(PrivateKey.fromString(data.treasuryKey));
+
         console.log("data.basePrice: ", data.basePrice*(10e7));
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
@@ -171,13 +176,16 @@ async function settleAuction(data) {
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price
-            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
-
+            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())            
+            .addUint256(data.royaltyPercentage)            
+            .addAddress(AccountId.fromString(data.royaltyId).toSolidityAddress()))
+            .freezeWith(client); // auctioner
+            
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
         console.log("b4 recrd");
         const createTokenRx = await createTokenTx.getRecord(client);
-        console.log("transactionId: "+createTokenRx.transactionId);
+        console.log("transactionId: "+createTokenRx.transactionId);    
         return createTokenRx.transactionId;
 } catch(error) {
         console.log("Error : "+ error)
@@ -200,15 +208,16 @@ async function auctionClaim(data) {
         console.log("client called....")       
         
         // Create NFT using precompile function
-        const createToken = new ContractExecuteTransaction()
+        const ct = new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
         .setFunction("claimAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price
-            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
-
+            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()))
+            .freezeWith(client); // auctioner
+        const createToken = await ct.sign(PrivateKey.fromString(data.adminKey));
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
         console.log("b4 recrd");
@@ -294,7 +303,7 @@ async function getAuctionDetails(data) {
 
         console.log("contract id inside contract call : " + data.contractId);
 
-        const functionAbi = contract.abi.find(func => (func.name === "readyToClaim" && func.type === "function"));
+        const functionAbi = contract.abi.find(func => (func.name === "bidWinner" && func.type === "function"));
         console.log("functionAbi : " + JSON.stringify(functionAbi))
         const encodedParametersHex = web3.eth.abi.encodeFunctionCall(functionAbi, []).slice(2);  
         // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
@@ -307,34 +316,31 @@ async function getAuctionDetails(data) {
             .setFunctionParameters(params)
           
          const contractCallResult = await query.execute(client); 
-         // console.log("contract call result ",contractCallResult);       // Get the function value
-         const message = contractCallResult.bytes;
-         console.log("contract message: " + JSON.stringify(message));
-         console.log("contract message: " + message.toString('hex'));
-         let hexStr = message.toString('hex');
-         console.log("readyToClaim: " + parseInt(hexStr, 16));
-
+         const tokenIdSolidityAddr = contractCallResult.contractFunctionResult.getAddress(0);       // Get the function value
+          console.log("tokenIdSolidityAddr: "+ tokenIdSolidityAddr);
+          const tokenId = AccountId.fromSolidityAddress(tokenIdSolidityAddr);
+         console.log("Bid winner " +   tokenId);
          
-         console.log("************************   PRICE AMT  **********************************")
+        //  console.log("************************   PRICE AMT  **********************************")
 
-         const functionAbi1 = contract.abi.find(func => (func.name === "claimed" && func.type === "function"));
-        console.log("functionAbi : " + JSON.stringify(functionAbi1))
-        const encodedParametersHex1 = web3.eth.abi.encodeFunctionCall(functionAbi1, []).slice(2);  
-        // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
-        const params1 =  Buffer.from(encodedParametersHex1, 'hex');
-        // console.log("params : "+ params)
-        const query1 = 
-         new ContractCallQuery()
-            .setContractId(ContractId.fromString(data.contractId))
-            .setGas(100000)
-            .setFunctionParameters(params1)
-         const contractCallResult1 = await query1.execute(client); 
-         // console.log("contract call result ",contractCallResult);       // Get the function value
-         const message1 = contractCallResult1.bytes;
-         console.log("contract message: " + JSON.stringify(message));
-         console.log("contract message: " + message1.toString('hex'));
-         let hexStr1 = message1.toString('hex');
-         console.log("claimed: " + parseInt(hexStr1, 16));
+        //  const functionAbi1 = contract.abi.find(func => (func.name === "claimed" && func.type === "function"));
+        // console.log("functionAbi : " + JSON.stringify(functionAbi1))
+        // const encodedParametersHex1 = web3.eth.abi.encodeFunctionCall(functionAbi1, []).slice(2);  
+        // // console.log("Encoded Input parametersData", Buffer.from(encodedParametersHex, 'hex'))
+        // const params1 =  Buffer.from(encodedParametersHex1, 'hex');
+        // // console.log("params : "+ params)
+        // const query1 = 
+        //  new ContractCallQuery()
+        //     .setContractId(ContractId.fromString(data.contractId))
+        //     .setGas(100000)
+        //     .setFunctionParameters(params1)
+        //  const contractCallResult1 = await query1.execute(client); 
+        //  // console.log("contract call result ",contractCallResult);       // Get the function value
+        //  const message1 = contractCallResult1.bytes;
+        //  console.log("contract message: " + JSON.stringify(message));
+        //  console.log("contract message: " + message1.toString('hex'));
+        //  let hexStr1 = message1.toString('hex');
+        //  console.log("claimed: " + parseInt(hexStr1, 16));
 
         //  console.log("************************   MSG VALUE  **********************************")
 
