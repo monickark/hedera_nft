@@ -4,8 +4,10 @@ const { getAccountInfo, transferBalance } = require('../controllers/accountContr
 const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTransfer, associateToken, userNFTs, 
         scheduleTransaction, scheduleSignTransaction, associateTokenSign, transferTokenDiffUser,
         transferTokenSign, scheduleSignTransactionObj } = require('../controllers/tokenController.js');
-const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, claimAuction, retrieveAuction } = require('../controllers/auctionController.js');
-const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, associateContractToken } = require('../controllers/contractController.js');
+const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, claimAuction, 
+        getTokenCustomFee } = require('../controllers/auctionController.js');
+const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, 
+        associateContractToken } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
 
@@ -27,7 +29,7 @@ appRoute.post("/settleAuction", settlementAuction)
 
 appRoute.post("/claimAuction", claimAuction)
 
-appRoute.get("/retrieveAuction", retrieveAuction)
+appRoute.get("/getTokenCustomFee", getTokenCustomFee)
 
 // TOKEN THROGH CONTRACT
 

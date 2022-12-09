@@ -11,19 +11,20 @@ const {
     AccountId,
     TokenId,
     ContractId,
-    AccountAllowanceApproveTransaction
+    AccountAllowanceApproveTransaction,
+    TransactionId
 } = require("@hashgraph/sdk");
 const fs = require("fs");
 const bytecode = fs.readFileSync(
     "./binaries/contracts_AuctionContract_sol_AuctionContract.bin"
   );
 const contract =  require("../build/contracts/AuctionContract.json");
-const { createClient } = require('./client.js');
+const { createClient,createClient1 } = require('./client.js');
 require("dotenv").config();
 const Web3 = require("web3");
 
 const ethers = require('ethers');
-let client;
+let client, client1;
 let contractId;
 const web3 = new Web3;
 
@@ -95,11 +96,8 @@ async function createAuctionDetails(data) {
         .setFunction("createAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
-            .addInt64(data.serialNumber) // base price            
-            .addUint256(data.basePrice*(10e7))
-            .addAddress(AccountId.fromString(data.treasuryId).toSolidityAddress()))
-            .freezeWith(client); // base price)
-       // const createToken = await ct.sign(PrivateKey.fromString(data.treasuryKey));
+            .addInt64(data.serialNumber) // serial number           
+            .addUint256(data.basePrice*(10e7))); 
 
         console.log("data.basePrice: ", data.basePrice*(10e7));
         console.log("b4 execute");
@@ -114,10 +112,57 @@ async function createAuctionDetails(data) {
     } 
 }
 
+// async function placeBid(data) {
+//     try {
+//         console.log("inside place bid: "+ JSON.stringify(data))
+//         let response = await createClient();
+//         let response1 = await createClient1();
+//         if (response.err) {
+//             console.log("response.err", response.err);
+//             let outpuJSON = {
+//                 message: "Client creation Failed",
+//                 err: response.err
+//             };
+//             return outpuJSON;
+//         }
+//         client = response.client;
+//         client1 = response1.client;
+//         console.log("client called....")       
+        
+//         // Create NFT using precompile function
+//         const ct = new ContractExecuteTransaction()
+//         .setContractId(ContractId.fromString(data.contractId))
+//         .setGas(3000000) // Increase if revert
+//         .setTransactionId(TransactionId.generate(AccountId.fromString(process.env.BIDDER_ID)))
+//         .setPayableAmount(data.price) // Increase if revert
+//         .setFunction("placeBid",
+//             new ContractFunctionParameters()
+//             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
+//             .addInt64(data.serialNumber) // base price // base price
+//             .addUint256(data.price*(10e7))
+//             .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()))
+//             .freezeWith(client)
+            
+//         let ct1 = await ct.sign(PrivateKey.fromString(process.env.MY_PRIVATE_KEY));
+//         const  createToken = await ct1.sign(PrivateKey.fromString(process.env.BIDDER_KEY)); // auctioner
+//         console.log("price : " + data.price*(10e7));
+//         console.log("b4 execute");
+//         const createTokenTx = await createToken.execute(client1);
+//         console.log("b4 recrd");
+//         const createTokenRx = await createTokenTx.getRecord(client1);
+//         console.log("transactionId: "+createTokenRx.transactionId);
+//         return createTokenRx.transactionId;
+     
+// } catch(error) {
+//         console.log("Error : "+ error)
+//     } 
+// }
+
 async function placeBid(data) {
     try {
         console.log("inside place bid: "+ JSON.stringify(data))
         let response = await createClient();
+        let response1 = await createClient1();
         if (response.err) {
             console.log("response.err", response.err);
             let outpuJSON = {
@@ -127,27 +172,35 @@ async function placeBid(data) {
             return outpuJSON;
         }
         client = response.client;
+        client1 = response1.client;
         console.log("client called....")       
         
         // Create NFT using precompile function
-        const createToken = new ContractExecuteTransaction()
+        const transaction = new ContractExecuteTransaction()
         .setContractId(ContractId.fromString(data.contractId))
         .setGas(3000000) // Increase if revert
+        .setTransactionId(TransactionId.generate(AccountId.fromString(process.env.BIDDER_ID)))
         .setPayableAmount(data.price) // Increase if revert
         .setFunction("placeBid",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
             .addInt64(data.serialNumber) // base price // base price
             .addUint256(data.price*(10e7))
-            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())); // auctioner
-        console.log("price : " + data.price*(10e7));
-        console.log("b4 execute");
-        const createTokenTx = await createToken.execute(client);
-        console.log("b4 recrd");
-        const createTokenRx = await createTokenTx.getRecord(client);
-        console.log("transactionId: "+createTokenRx.transactionId);
-        return createTokenRx.transactionId;
-     
+            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()))
+          //  .setNodeAccountIds([new AccountId(3)])
+            .freezeWith(client);
+            // encode 1
+            const transactionDTO1 = transaction.toBytes();
+            const transactionDTO1Armoured =  Buffer.from(transactionDTO1).toString('base64');  
+            // Decode 1
+            const transactionRebuiltRaw1 = Buffer.from(transactionDTO1Armoured, 'base64');
+            const transactionRebuilt1 = ContractExecuteTransaction.fromBytes(transactionRebuiltRaw1);        
+           // const signedTransaction3 = await transactionRebuilt1.sign(PrivateKey.fromString(process.env.BIDDER_KEY))
+        
+            const txResponse = await transactionRebuilt1.execute(client1);        
+            const receipt = await txResponse.getReceipt(client1);        
+            console.log(`TX ${txResponse.transactionId.toString()} status: ${receipt.status}`);
+             
 } catch(error) {
         console.log("Error : "+ error)
     } 
@@ -175,11 +228,7 @@ async function settleAuction(data) {
         .setFunction("settleAuction",
             new ContractFunctionParameters()
             .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()) //token
-            .addInt64(data.serialNumber) // base price
-            .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress())            
-            .addUint256(data.royaltyPercentage)            
-            .addAddress(AccountId.fromString(data.royaltyId).toSolidityAddress()))
-            .freezeWith(client); // auctioner
+            .addInt64(data.serialNumber)); // auctioner
             
         console.log("b4 execute");
         const createTokenTx = await createToken.execute(client);
@@ -229,7 +278,7 @@ async function auctionClaim(data) {
     } 
 }
 
-async function getAuction(data) {
+async function getTokenCustomFee(data) {
     try {
         console.log("inside get Auction: "+ JSON.stringify(data))
         let response = await createClient();
@@ -243,38 +292,22 @@ async function getAuction(data) {
         }
         client = response.client;
         console.log("client called....")       
-        //Contract call query
-        
-        // const query = new ContractCallQuery()
-        //     .setContractId(data.contractId)
-        //     .setGas(300000)
-        //     .setFunction("mapAuction", new ContractFunctionParameters()
-        //         .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress())
-        //         .addInt64(data.serialNumber)
-        //         .addAddress(AccountId.fromString(data.auctioner).toSolidityAddress()));
+        // Contract call query
         
         const query = new ContractCallQuery()
-        .setContractId(data.contractId)
-        .setGas(300000)
-        .setFunction("auctioners");
-    
-        
-            // const query = new ContractCallQuery()
-        // .setContractId(data.contractId)
-        // .setGas(300000)
-        // .setFunction("getTest", new ContractFunctionParameters().addUint256(2));
-
+            .setContractId(data.contractId)
+            .setGas(300000)
+            .setFunction("getTokenCustomFees", new ContractFunctionParameters()
+                .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()))
+                
         //Sign with the client operator private key to pay for the query and submit the query to a Hedera network
         const contractCallResult = await query.execute(client);
         console.log("contractCallResult: " + JSON.stringify(contractCallResult.bytes));
         console.log("contractCallResult: " + TokenId.fromBytes(contractCallResult.bytes));
       //  console.log("contractCallResult: " + parseInt(contractCallResult.bytes));
 
-
         const receipt = await contractCallResult.getReceipt(client);
         console.log("receipt: " + JSON.stringify(receipt));
-        contractId = (receipt.contractId).toString();
-        console.log("The new contract ID is ", contractId);
         
         // Get the function value
         const message = contractCallResult.getString(0);
@@ -374,5 +407,5 @@ async function getAuctionDetails(data) {
 }
 
 module.exports = {
-     deployContract, createAuctionDetails, placeBid, settleAuction, getAuction, getAuctionDetails, auctionClaim
+     deployContract, createAuctionDetails, placeBid, settleAuction, getTokenCustomFee, getAuctionDetails, auctionClaim
 }

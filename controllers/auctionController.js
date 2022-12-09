@@ -1,4 +1,4 @@
-const { deployContract, createAuctionDetails, placeBid, settleAuction, auctionClaim, getAuctionDetails} = require("../services/auctionServices.js");
+const { deployContract, createAuctionDetails, placeBid, settleAuction, auctionClaim, getTokenCustomFee} = require("../services/auctionServices.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 
 
@@ -140,11 +140,11 @@ exports.claimAuction = async (req, res) => {
     }
 }
 
-exports.retrieveAuction = async (req, res) => {
+exports.getTokenCustomFee = async (req, res) => {
     try {        
         console.log("Create place Bid started");
         console.log("Token body params: " + req.query);
-        let response = await getAuctionDetails(req.query);        
+        let response = await getTokenCustomFee(req.query);        
         console.log("RESPONSE address: "+ response);
         console.log("RESPONSE address: "+ JSON.stringify(response));
         if (response.err) {
