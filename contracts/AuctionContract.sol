@@ -72,6 +72,15 @@ contract AuctionContract is ExpiryHelper {
     transferNonFungibleToken(_tokenId, msg.sender, NftOnAuction.currentBidder,  _serialNumber);
   }
 
+  function getCustomfee(
+    address token
+  ) public returns (int64 responseCode, IHederaTokenService.FixedFee[] memory fixedFees, 
+                    IHederaTokenService.FractionalFee[] memory fractionalFees, 
+                    IHederaTokenService.RoyaltyFee[] memory royaltyFees) { 
+     //  return (responseCode, fixedFees, fractionalFees,  royaltyFees) =  
+      return HederaTokenService.getTokenCustomFees(token);   
+  }
+
   function transferNonFungibleToken(
     address token,
     address sender,

@@ -377,21 +377,23 @@ abstract contract HederaTokenService is HederaResponseCodes {
         responseCode = success ? abi.decode(result, (int32)) : HederaResponseCodes.UNKNOWN;
     }
 
-    /// Query token custom fees
-    /// @param token The token address to check
-    /// @return responseCode The response code for the status of the request. SUCCESS is 22.
-    /// @return fixedFees Set of fixed fees for `token`
-    /// @return fractionalFees Set of fractional fees for `token`
-    /// @return royaltyFees Set of royalty fees for `token`
-    //    function getTokenCustomFees(address token) internal
-    //     returns (int64 responseCode, IHederaTokenService.FixedFee[] memory, IHederaTokenService.FractionalFee[] memory, 
-    //     IHederaTokenService.RoyaltyFee[] memory)
+    // / Query token custom fees
+    // / @param token The token address to check
+    // / @return responseCode The response code for the status of the request. SUCCESS is 22.
+    // / @return fixedFees Set of fixed fees for `token`
+    // / @return fractionalFees Set of fractional fees for `token`
+    // / @return royaltyFees Set of royalty fees for `token`
+       function getTokenCustomFees(address token) internal
+        returns (int64 responseCode, IHederaTokenService.FixedFee[] memory, IHederaTokenService.FractionalFee[] memory, 
+        IHederaTokenService.RoyaltyFee[] memory)
 
-    // {
-    //     (bool success, bytes memory result)  = precompileAddress.call(
-    //         abi.encodeWithSelector(IHederaTokenService.getTokenCustomFees.selector,
-    //         token));
-    //     return (responseCode, fixedFees, fractionalFees, royaltyFees);
-    // }
+    {
+        (bool success, bytes memory result)  = precompileAddress.call(
+            abi.encodeWithSelector(IHederaTokenService.getTokenCustomFees.selector,
+            token));
+        return (responseCode, abi.decode(result, (IHederaTokenService.FixedFee[])), 
+                abi.decode(result, (IHederaTokenService.FractionalFee[])), 
+                abi.decode(result, (IHederaTokenService.RoyaltyFee[])));
+    }
 
 }

@@ -5,7 +5,8 @@ const {
     PrivateKey,
     AccountId,
     TokenId,
-    ContractId
+    ContractId,
+    ContractCallQuery
 } = require("@hashgraph/sdk");
 const { createClient } = require('./client.js');
 const Web3 = require("web3");
@@ -13,9 +14,64 @@ const fs = require("fs");
 const bytecode = fs.readFileSync(
     "./binaries/contracts_TokenContract_sol_TokenCreator.bin"
   );
+// const bytecode = fs.readFileSync(
+//     "./binaries/contracts_Crypt_O_Monsters_sol_Crypt_O_Monsters.bin"
+//   );
 require("dotenv").config();
 let client;
 let contractId;
+
+// async function deployContract() {
+//     try {
+//         let response = await createClient();
+//         if (response.err) {
+//             console.log("response.err", response.err);
+//             let outpuJSON = {
+//                 message: "Client creation Failed",
+//                 err: response.err
+//             };
+//             return outpuJSON;
+//         }
+//         client = response.client;
+
+//         const myAccountId = process.env.MY_ACCOUNT_ID;
+//         const privateKey = process.env.MY_PRIVATE_KEY;
+//         let private_key = PrivateKey.fromString(privateKey);
+//         let publicKey = private_key.publicKey;
+//         console.log("privatekey: "+ privateKey)
+//         console.log("publickey: "+ publicKey)
+//         const contractCreate = new ContractCreateFlow()
+//             .setGas(10000000)
+//             .setAdminKey(publicKey)
+//             .setContractMemo("AUCTION")
+//             .setAutoRenewAccountId(myAccountId)
+//             .setAutoRenewPeriod(8000001)// 92 days  
+//             .setBytecode(bytecode)
+//             .setConstructorParameters(
+//                 new ContractFunctionParameters()
+//                 .addString("Contract NFT")
+//                 .addString("CNFT")
+//                 .addString("https://ipfs.io/ipfs/Qmdgu9afuL6SgCRzsJ4P8fKKDxEzMf7ZNtgLT9gwkQi5V2/")
+//                 .addString("https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu/")
+//              );
+        
+//         console.log("contract create flow.....");
+//         const txResponse = await contractCreate.execute(client);
+//         const receipt = await txResponse.getReceipt(client);
+//         contractId = (receipt.contractId).toString();
+//         console.log("The new contract ID is ", contractId);
+//         let outputJSON = { contractId: contractId };
+//         return outputJSON;
+//     }
+//     catch (error) {
+//         let outpuJSON = {
+//             message: "Contract Deployment Failed",
+//             err: error
+//         }
+//         return outpuJSON;
+//     }
+
+// }
 
 async function deployContract() {
     try {
@@ -108,8 +164,43 @@ async function createContractToken(data) {
         console.log("Error : "+ error)
     } 
 }
-
 async function mintToken(data) {
+    try {
+        console.log("inside createTokenDetails: "+ JSON.stringify(data))
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        console.log("client called....")        
+        
+        // Create NFT using precompile function
+        const createToken = new ContractExecuteTransaction()
+        .setContractId(ContractId.fromString(data.contractId))
+        .setGas(1500000) // Increase if revert
+        .setFunction("mint",
+            new ContractFunctionParameters()
+            .addUint256(1)); //token //NFT name
+        console.log("b4 execute");
+        const createTokenTx = await createToken.execute(client);
+      //  console.log("b4 recrd");
+     //   const createTokenRx = await createTokenTx.getRecord(client);
+       console.log("transactionId: "+JSON.stringify(createTokenTx.transactionId));
+       console.log("transactionId: "+createTokenTx.transactionId);
+       
+    //    return tokenId;
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
+async function mintNFT(data) {
     try {
         console.log("inside createTokenDetails: "+ JSON.stringify(data))
         let response = await createClient();
@@ -222,6 +313,37 @@ async function associateToken(data) {
         console.log("Error : "+ error)
     } 
 }
+
+async function getTokenURI(data) {
+    try {
+        console.log("Retrieving Token URI: "+ JSON.stringify(data))
+        let response = await createClient();
+        if (response.err) {
+            console.log("response.err", response.err);
+            let outpuJSON = {
+                message: "Client creation Failed",
+                err: response.err
+            };
+            return outpuJSON;
+        }
+        client = response.client;
+        
+        const query = new ContractCallQuery().setContractId(data.contractId)
+        .setGas(300000).setFunction("totalSupply");   
+        let contractCallResult = await query.execute(client);
+        console.log("Total Supply: " + contractCallResult.getUint256(0));
+
+        const query1 = new ContractCallQuery() .setContractId(data.contractId)
+        .setGas(300000) .setFunction("tokenURI", new ContractFunctionParameters().addUint256(data.tokenId));
+        let contractCallResult1 = await query1.execute(client);
+        console.log("Token URI: " + JSON.stringify(contractCallResult1.getString(0)));
+        
+     
+} catch(error) {
+        console.log("Error : "+ error)
+    } 
+}
+
 module.exports = {
-    deployContract, createContractToken, mintToken, transferToken, associateToken
+    deployContract, createContractToken, mintToken, transferToken, associateToken, getTokenURI
 }

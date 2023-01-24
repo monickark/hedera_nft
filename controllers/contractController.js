@@ -1,4 +1,4 @@
-const { deployContract, createContractToken, mintToken, transferToken, associateToken } = require("../services/contractService.js");
+const { deployContract, createContractToken, mintToken, transferToken, associateToken, getTokenURI } = require("../services/contractService.js");
 const { successResponse, errorResponse } = require('../utilities/response');
 
 exports.deployTokenContract = async (req, res) => {
@@ -157,4 +157,33 @@ exports.transferContractToken = async (req, res) => {
         return errorResponse(res, outpuJSON, 500);
     }
 
+}
+
+exports.getTokenURI = async (req, res) => {
+    try {        
+        console.log("Create place Bid started");
+        console.log("Token body params: " + req.query);
+        let response = await getTokenURI(req.query);        
+        console.log("RESPONSE address: "+ response);
+        console.log("RESPONSE address: "+ JSON.stringify(response));
+        if (response.err) {
+            console.log("Error", response.err);
+            let errorJSON = {
+                message: "Token Creation Failed"
+            }
+            return errorResponse(res, errorJSON, 500);
+        }
+        let outputJSON = {
+            "message": "Token Created",
+            "tokenId": response.shard.low+"."+response.realm.low+"."+response.num.low
+        }
+        return successResponse(res, outputJSON);
+    } catch (error) {
+        console.log("Error", error)
+        let outpuJSON = {
+            message: "Failed to create token",
+            err: error
+        };
+        return errorResponse(res, outpuJSON, 500);
+    }
 }

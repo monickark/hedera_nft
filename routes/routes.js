@@ -7,7 +7,7 @@ const { createToken, mintToken, createCollection, contractTreasuryToken, tokenTr
 const { deployAuctionContract, createAuction, placeBidAuction, settlementAuction, claimAuction, 
         getTokenCustomFee } = require('../controllers/auctionController.js');
 const { deployTokenContract, createContractToken, mintContractToken, transferContractToken, 
-        associateContractToken } = require('../controllers/contractController.js');
+        associateContractToken, getTokenURI } = require('../controllers/contractController.js');
 const { createAccount} = require('../controllers/accountController.js');
 const { body } = require('express-validator');
 
@@ -30,6 +30,10 @@ appRoute.post("/settleAuction", settlementAuction)
 appRoute.post("/claimAuction", claimAuction)
 
 appRoute.get("/getTokenCustomFee", getTokenCustomFee)
+
+// GENERATIVE NFT
+
+appRoute.get("/getTokenURI", getTokenURI)
 
 // TOKEN THROGH CONTRACT
 

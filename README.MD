@@ -2,6 +2,7 @@
 npm start
 solcjs --bin contracts/AuctionContract.sol -o binaries 
 solcjs --bin contracts/TokenContract.sol -o binaries
+solcjs --bin contracts/Crypt_O_Monsters.sol -o binaries
 
 ## API
 1. {{host}}/createAccount

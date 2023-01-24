@@ -280,7 +280,7 @@ async function auctionClaim(data) {
 
 async function getTokenCustomFee(data) {
     try {
-        console.log("inside get Auction: "+ JSON.stringify(data))
+        console.log("Retrieving Token custom fee: "+ JSON.stringify(data))
         let response = await createClient();
         if (response.err) {
             console.log("response.err", response.err);
@@ -300,6 +300,7 @@ async function getTokenCustomFee(data) {
             .setFunction("getTokenCustomFees", new ContractFunctionParameters()
                 .addAddress(TokenId.fromString(data.tokenId).toSolidityAddress()))
                 
+        console.log("b4 query");        
         //Sign with the client operator private key to pay for the query and submit the query to a Hedera network
         const contractCallResult = await query.execute(client);
         console.log("contractCallResult: " + JSON.stringify(contractCallResult.bytes));

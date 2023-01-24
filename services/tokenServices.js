@@ -47,6 +47,21 @@ async function getCustomFees(numerator, denominator, royaltyId, isExempt, fallba
     }
 }
 
+async function getTokenInfo(tokenId, client) {
+    try{
+    console.log("getTokenInfo: "+ tokenId);
+    let tokenInfo = await new TokenInfoQuery()
+    .setTokenId(tokenId)
+    .execute(client);
+    console.table("customfee length:"+tokenInfo.customFees.length);
+    // console.table("customfee 1:"+tokenInfo.customFees[0]);
+    // console.table("customfee 1:"+JSON.stringify(tokenInfo.customFees[0]));
+     return tokenInfo.customFees[0];
+    } catch(err){
+        console.log("Error in retrieve custom fee: "+ err)
+    }
+}
+
 async function createTokenDetails(data) {
     try {
         console.log("inside createTokenDetails..." + JSON.stringify(data))
@@ -72,14 +87,14 @@ async function createTokenDetails(data) {
             .setTreasuryAccountId(data.treasuryId)
             .setSupplyType(TokenSupplyType.Finite)
             .setMaxSupply(data.maxSupply)
-            .setCustomFees([await getCustomFees(data.numerator, data.denominator, data.royaltyId, true, data.fallbackFee)])
+          //  .setCustomFees([await getCustomFees(data.numerator, data.denominator, data.royaltyId, true, data.fallbackFee)])
             .setMaxTransactionFee(new Hbar(50))
             .setAdminKey(PrivateKey.fromString(data.treasuryKey))
             .setSupplyKey(PrivateKey.fromString(data.supplyKey))
             .freezeWith(client)
 
-        console.log("b4 sign");
-        let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(data.treasuryKey));
+        // console.log("b4 sign");
+        // let nftCreateTxSign = await nftCreate.sign(PrivateKey.fromString(data.treasuryKey));
         console.log("b4 execute");
         let nftCreateSubmit = await nftCreateTxSign.execute(client);
         console.log("b4 receipt");
@@ -135,14 +150,6 @@ async function treasuryToken(data) {
         console.log("nftCreateRx:"+JSON.stringify(nftCreateRx));
         let tokenId = nftCreateRx.tokenId;
         console.log(`Created NFT with Token ID: ${tokenId} \n`);
-
-//         const contractUpdate = await new ContractUpdateTransaction()
-//             .setContractId(data.contractId)
-//             .setAdminKey(new KeyList())
-//             .execute(client);
-//         const contractUpdateRx = await contractUpdate.getReceipt(client);
- 
-// console.log("Contract update status: " + contractUpdateRx.status.toString());
         
         return tokenId;
      
@@ -150,15 +157,6 @@ async function treasuryToken(data) {
         console.log("Error : "+ error)
     } 
 }
-
-async function accountCreator(privateKey, initialBalance, client) {
-    const response = await new AccountCreateTransaction()
-        .setInitialBalance(new Hbar(initialBalance))
-        .setKey(privateKey.publicKey)
-        .execute(client);
-    const receipt = await response.getReceipt(client);
-    return receipt.accountId;
- }
 
 async function mintNewToken(data) {
     try {
@@ -180,6 +178,7 @@ async function mintNewToken(data) {
         .setTokenId(TokenId.fromString(data.tokenId))		
         .setMetadata([Buffer.from(data.metadata)])		
         .freezeWith(client);
+        
 
         console.log("before sign");
         //Sign the transaction with the supply key
@@ -286,11 +285,26 @@ async function transferTokens(data) {
         }
         client = response.client;
         console.log("client called...");
-        // Sign with the sender key to authorize the transfer        
-        let tokenTransfer = await new TransferTransaction()
+            let tokenInfo =  await getTokenInfo(data.tokenId, client);
+            console.log("token info: "+tokenInfo);
+            console.log("token info: "+JSON.stringify(tokenInfo));
+            console.log("_feeCollectorAccountId: "+tokenInfo._feeCollectorAccountId);            
+            console.log("_feeCollectorAccountId: "+tokenInfo._feeCollectorAccountId.toString());
+            
+            console.log("_numerator: "+tokenInfo._numerator); 
+            console.log("_denominator: "+tokenInfo._denominator); 
+            
+            let customfee = Hbar.fromString(data.price)*(tokenInfo._numerator/tokenInfo._denominator);
+            
+            let tokenTransfer = new TransferTransaction()            
             .addNftTransfer(data.tokenId, data.serialId, data.senderId, data.receiverId)
-            .freezeWith(client)
-            .sign(PrivateKey.fromString(data.senderKey));
+            .addHbarTransfer(data.receiverId, Hbar.fromString("-" + data.price)) //Sending account
+            // .addHbarTransfer(AccountId.fromString(tokenInfo._feeCollectorAccountId), customfee) //Royalty Receiving account
+            // .addHbarTransfer(AccountId.fromString(data.senderId), Hbar.fromString(data.price)-customfee) //Royalty Receiving account
+            .setNodeAccountIds([new AccountId(3)])
+            .freezeWith(client);
+            await tokenTransfer.sign(PrivateKey.fromString(data.senderKey));
+
             
        // console.log("b4 sign" + tokenTransfer)
           let tokenTransferTx = await tokenTransfer.sign(PrivateKey.fromString(data.receiverKey))
